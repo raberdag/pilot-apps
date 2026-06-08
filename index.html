@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cockpit Apps - Pilot Utilities</title>
+    <style>
+        /* Einheitliches Tank-Timer Farbkonzept (Aviation Dark Mode) */
+        :root {
+            --bg-color: #0f172a;        /* Tiefes Cockpit-Dunkelblau */
+            --card-bg: #1e293b;         /* Etwas helleres Blau für Boxen */
+            --accent-orange: #f97316;   /* Tank-Timer Signal-Orange */
+            --text-main: #f8fafc;       /* Klares Weiß für Primärtexte */
+            --text-muted: #94a3b8;      /* Luftfahrt-Grau für Übersetzungen/Hinweise */
+            --btn-hover: #ea580c;       /* Dunkleres Orange beim Drüberfahren */
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            text-align: center; 
+            padding: 40px 20px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
+        
+        .container { max-width: 850px; margin: 0 auto; }
+        
+        h1 { font-size: 32px; margin-bottom: 5px; color: var(--text-main); }
+        .brand-accent { color: var(--accent-orange); }
+        
+        .subtitle { font-size: 16px; margin-bottom: 40px; color: var(--text-muted); }
+        .lang-sep { color: var(--accent-orange); margin: 0 8px; }
+        
+        /* App-Karten im einheitlichen Design */
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .app-card { 
+            background: var(--card-bg); 
+            border-radius: 14px; 
+            padding: 25px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); 
+            text-align: left; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            border: 1px solid #334155;
+        }
+        
+        .app-title { font-size: 22px; font-weight: bold; margin: 0 0 12px 0; color: var(--text-main); border-bottom: 2px solid var(--accent-orange); padding-bottom: 5px; }
+        
+        .app-desc { font-size: 14px; margin-bottom: 20px; flex-grow: 1; color: var(--text-main); }
+        .en-desc { display: block; color: var(--text-muted); font-style: italic; margin-top: 8px; border-top: 1px dashed #334155; padding-top: 8px; }
+        
+        /* Buttons im Tank-Timer Orange */
+        .btn { 
+            display: block; 
+            text-align: center; 
+            padding: 14px; 
+            background: var(--accent-orange); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            transition: background 0.2s, transform 0.1s; 
+        }
+        .btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
+        .btn-subtext { display: block; font-size: 11px; font-weight: normal; color: #ffedd5; margin-top: 2px; }
+        
+        /* Spenden Sektion */
+        .donation-box { 
+            background: #111827; 
+            border: 2px dashed var(--accent-orange); 
+            border-radius: 14px; 
+            padding: 30px; 
+            margin-top: 50px; 
+        }
+        .donation-box h3 { margin-top: 0; color: var(--text-main); font-size: 20px; }
+        .donation-text-en { color: var(--text-muted); font-style: italic; margin-top: 10px; }
+        
+        .btn-donate { display: inline-block; padding: 12px 35px; background: #22c55e; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 15px; transition: background 0.2s; }
+        .btn-donate:hover { background: #16a34a; }
+        
+        .hint { color: var(--text-muted); font-size: 12px; margin-top: 25px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Hauptüberschrift zweisprachig -->
+    <h1><span class="brand-accent">Cockpit</span> Utility Apps</h1>
+    <p class="subtitle">
+        Kostenlose Tools von Piloten für Piloten und Interessierte <span class="lang-sep">|</span> Free tools made by pilots for pilots and anyone interested.
+    </p>
+    
+    <div class="app-grid">
+        
+        <!-- App 1: Ihre Tank-Timer App -->
+        <div class="app-card">
+            <h2 class="app-title">⛽ Fuel Tank Timer</h2>
+            <div class="app-desc">
+                Sorgt für rechtzeitiges Umschalten der Kraftstofftanks im Flug. Verhindert verlässlich ungleichmäßige Tankentleerung durch präzise Audio- und Vibrationsalarme.
+                <span class="en-desc">Ensures timely switching of fuel tanks during flight. Reliably prevents fuel imbalance with precise audio and vibration alerts.</span>
+            </div>
+            <!-- Dateiname anpassen falls nötig -->
+            <a href="tank-timer.apk" class="btn">
+                App kostenlos laden
+                <span class="btn-subtext">Download for free (.APK)</span>
+            </a>
+        </div>
+
+
+       <!-- AB HIER UNSICHTBAR: Start des Kommentars -->
+        <!-- 
+        <div class="app-card">
+            <h2 class="app-title">✈️ Flight Leg Timer</h2>
+            <div class="app-desc">
+                Ein minimalistischer Backup-Timer für Leg-Zeiten, Halteplatz-Berechnungen und die Flugvorbereitung im Cockpit. Vollständig offline-fähig.
+                <span class="en-desc">A minimalist backup timer for leg times, holding patterns, and flight planning in the cockpit. Fully functional offline.</span>
+            </div>
+            <a href="leg-timer.apk" class="btn">
+                App kostenlos laden
+                <span class="btn-subtext">Download for free (.APK)</span>
+            </a>
+        </div>
+        -->
+        <!-- BIS HIER UNSICHTBAR: Ende des Kommentars -->
+        
+
+    </div>
+
+    <!-- Spenden-Box zweisprachig -->
+    <div class="donation-box">
+        <h3>☕ Unterstütze dieses Hobbyprojekt <span class="lang-sep">|</span> Support this project</h3>
+        
+        <p>Diese Apps sind komplett kostenlos, werbefrei und tracken keine Daten. Ich entwickle sie in meiner Freizeit für uns Piloten und Interessierte. Wenn Dir ein Tool gefällt und es Dir im Cockpit hilft, freue ich mich riesig über einen Kaffee!</p>
+        
+        <p class="donation-text-en">These apps are completely free, ad-free, and don’t track any data. I develop them in my spare time for fellow pilots and anyone else who’s interested. If you like a tool and find it helpful in the cockpit, I’d really appreciate it if you could buy me a coffee!</p>
+        
+        <!-- Hier Ihren echten PayPal-Link eintragen -->
+        <a href="https://PayPal.me/AndreasSchlagintweit" target="_blank" class="btn-donate">
+            ☕ Kaffee spendieren / Buy me a coffee
+        </a>
+        
+        <p class="hint">
+            Hinweis für Android: Erlaube in den Systemeinstellungen den Download aus "unbekannten Quellen" für deinen Browser.<br>
+            Note for Android: Allow installation from "unknown sources" in your browser's security settings.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
