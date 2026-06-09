@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impressum / Legal Notice</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-orange: #f97316;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            padding: 30px 20px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
+        
+        .container { max-width: 700px; margin: 0 auto; text-align: left; }
+        
+        h1 { font-size: 26px; color: var(--text-main); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px; margin-bottom: 25px; }
+        h2 { font-size: 16px; color: var(--text-main); margin-top: 20px; margin-bottom: 5px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
+        p { margin: 0; line-height: 1.5; color: #cbd5e1; }
+        .en-version { color: var(--text-muted); font-style: italic; }
+        
+        .btn-back { 
+            display: inline-block; 
+            margin-bottom: 20px; 
+            padding: 8px 16px; 
+            background: #334155; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            font-weight: bold;
+        }
+        .btn-back:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="btn-back">⬅ Zurück / Back</a>
+    
+    <h1>Impressum <span style="color: var(--accent-orange); margin: 0 8px;">|</span> Legal Notice</h1>
+    
+    <div class="grid">
+        <!-- Deutsche Version -->
+        <div>
+            <h2>Angaben gemäß § 5 DDG:</h2>
+            <p>
+                Andreas Schlagintweit<br>
+                Hauptstr. 65<br>
+                91086 Aurachtal<br>
+                Deutschland
+            </p>
+            
+            <h2>Kontakt:</h2>
+            <p>
+                E-Mail: hubi-fan@gmx.de<br>
+                Telefon: +49 178 1344464
+            </p>
+            
+            <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:</h2>
+            <p>
+                Andreas Schlagintweit<br>
+                Hauptstr. 65<br>
+                91086 Aurachtal<br>
+                Deutschland
+            </p>
+        </div>
+        
+        <!-- Englische Version -->
+        <div class="en-version">
+            <h2>Information according to § 5 DDG:</h2>
+            <p>
+                Andreas Schlagintweit<br>
+                Hauptstr. 65<br>
+                91086 Aurachtal<br>
+                Germany
+            </p>
+            
+            <h2>Contact:</h2>
+            <p>
+                E-Mail: hubi-fan@gmx.de<br>
+                Mobil: +49 178 1344464
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
