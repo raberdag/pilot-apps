@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurzanleitung - Tank-Timer</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-orange: #f97316;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            padding: 30px 20px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
+        
+        .container { max-width: 700px; margin: 0 auto; text-align: left; }
+        
+        h1 { font-size: 26px; color: var(--text-main); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { font-size: 20px; color: var(--accent-orange); margin-top: 30px; }
+        
+        .intro-box { background: #111827; border-left: 4px solid var(--accent-orange); padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; font-size: 15px; }
+        .tip-box { background: #334155; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; border: 1px dashed var(--text-muted); }
+        
+        ol { padding-left: 20px; }
+        li { margin-bottom: 12px; }
+        strong { color: #fff; }
+        
+        .step-title { font-weight: bold; color: var(--accent-orange); display: block; margin-top: 15px; }
+        
+        .btn-back { 
+            display: inline-block; 
+            margin-bottom: 20px; 
+            padding: 8px 16px; 
+            background: #334155; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            font-weight: bold;
+        }
+        .btn-back:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="btn-back">⬅ Zurück zur Übersicht / Back</a>
+    
+    <h1>Kurzanleitung: Installation & Einrichtung „Tank-Timer“</h1>
+    
+    <div class="intro-box">
+        Damit die App zuverlässig im Hintergrund läuft, das Handy aus dem Standby aufwecken und sich im Ernstfall als Warnbildschirm über alle anderen Apps (wie z. B. Navigationssoftware) legen kann, müssen bei der Erstinstallation ein paar Android-Sicherheitseinstellungen angepasst werden.
+    </div>
+
+    <h2>1. Installation der APK</h2>
+    <ol>
+        <li>Kopiere die Datei <strong>tank-timer.apk</strong> auf dein Android-Handy.</li>
+        <li>Öffne die Datei auf dem Handy (z. B. über den Dateimanager).</li>
+        <li>Falls die Meldung „Aus unbekannten Quellen installieren“ erscheint, bestätige dies für deinen Dateimanager.</li>
+        <li>Klicke auf <strong>Installieren</strong>.</li>
+    </ol>
+
+    <h2>2. Wichtige Systemeinstellungen anpassen (Einmalig)</h2>
+    <p>Nach der Installation musst du der App die Rechte geben, die Sicherheitsbarrieren von Android zu durchbrechen.</p>
+    
+    <div class="tip-box">
+        💡 <strong>Tipp:</strong> Halte das Icon der Tank-Timer-App auf deinem Startbildschirm für 2 Sekunden gedrückt und tippe auf das „i“-Symbol (App-Info). Alternativ findest du die Einstellungen unter <em>Einstellungen -> Apps -> Tank-Timer</em>.
+    </div>
+    
+    <p>Nimm dort bitte folgende zwei Einstellungen vor:</p>
+
+    <span class="step-title">Schritt A: „Über anderen Apps anzeigen“ aktivieren (Overlay-Recht)</span>
+    <p style="margin-top: 5px; font-size: 15px; color: var(--text-muted);">Dieses Recht sorgt dafür, dass der rote Warnbildschirm sofort erscheint, selbst wenn du gerade eine Navigations-App (wie Skydemon, ForeFlight etc.) im Vordergrund geöffnet hast.</p>
+    <ol>
+        <li>Suche in der App-Info den Punkt <strong>„Über anderen Apps anzeigen“</strong> (manchmal auch „Am Startbildschirm einblenden“ oder „Draw over other apps“).</li>
+        <li>Schalte den Regler auf <strong>Zulassen / Aktiviert</strong>.</li>
+    </ol>
+
+    <span class="step-title">Schritt B: Akku-Optimierung ausschalten (Wichtig für das Timing!)</span>
+    <p style="margin-top: 5px; font-size: 15px; color: var(--text-muted);">Android versucht standardmäßig, Apps im Hintergrund nach einigen Minuten schlafen zu legen, um Strom zu sparen. Damit der Timer im Hintergrund sekundengenau weiterläuft, muss die Optimierung deaktiviert werden.</p>
+    <ol>
+        <li>Suche in der App-Info den Punkt <strong>„Akku“</strong> oder <strong>„Akkunutzung“</strong>.</li>
+        <li>Ändere die Einstellung von „Optimiert“ auf <strong>„Nicht optimiert“</strong> (auf einigen Geräten heißt das „Unbeschränkt“).</li>
+    </ol>
+
+    <h2>3. Erster Start & Bluetooth-Hinweis</h2>
+    <ul>
+        <li><strong>Ton über Headset:</strong> Der Alarmton ist so programmiert, dass er als „Medien/Musik“ ausgegeben wird. Wenn dein Handy per Bluetooth mit deinem Intercom oder Headset (z. B. Bose A20/A30, Lightspeed) verbunden ist, hörst du den Alarm direkt auf den Ohren.</li>
+        <li>Stelle vor dem Flug sicher, dass die Medienlautstärke am Handy laut genug eingestellt ist (kann auch in der App über den Schieberegler getestet werden).</li>
+    </ul>
+
+    <div class="intro-box" style="border-left-color: #22c55e; margin-top: 30px; text-align: center; font-weight: bold;">
+        Der Tank-Timer ist nun startklar und einsatzbereit für den sicheren Flugbetrieb!
+    </div>
+</div>
+
+</body>
+</html>
