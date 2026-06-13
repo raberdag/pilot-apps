@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anleitung - Fly Weight</title>
+    <style>
+        body { 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #f59e0b;
+            font-size: 24px;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #38bdf8;
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 8px;
+        }
+        p, li {
+            color: #cbd5e1;
+            font-size: 15px;
+        }
+        ul {
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .warning-box {
+            background-color: #1e293b;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        .warning-box strong {
+            color: #ef4444;
+        }
+        .info-box {
+            background-color: #1e293b;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        .info-box strong {
+            color: #10b981;
+        }
+        .disclaimer-box { 
+            font-size: 11px; 
+            color: #64748b; 
+            margin-top: 40px; 
+            text-align: justify;
+            border-top: 1px solid #334155;
+            padding-top: 15px;
+        }
+        .copyright-text { 
+            font-size: 11px; 
+            color: #475569; 
+            text-align: center; 
+            margin-top: 15px; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>✈️ Kurzanleitung: Weight & Balance Rechner</h1>
+    <p>Diese App dient der präzisen und schnellen Berechnung von Abfluggewicht (Weight) und Schwerpunktlage (Center of Gravity / CG) vor dem Flug. Sie unterstützt insgesamt sechs verschiedene Flugzeugtypen (PA28-161-Cadet, PA28-181-Archer II, Cessna 150, Cessna 172, TB-10 u. TB-20 .</p>
+
+    <h2>1. Flugzeugtyp auswählen</h2>
+    <ul>
+        <li>Wählen Sie nach dem Start der App den gewünschten <strong>Flugzeugtypen</strong> aus dem Hauptmenü aus.</li>
+        <li>Die spezifischen Grenzwerte, Hebelarme (Stations) und Standarddaten für das gewählte Luftfahrzeug werden automatisch im Hintergrund geladen.</li>
+    </ul>
+
+    <h2>2. Ladungswerte eingeben</h2>
+    <ul>
+        <li>Tragen Sie die aktuellen Gewichte für Ihren Flug in die entsprechenden Eingabefelder ein:
+            <ul>
+                <li><strong>Pilot / Copilot vorne</strong> (kg)</li>
+                <li><strong>Passagiere hinten</strong> (kg) – <em>wird bei der Cessna 150 automatisch ausgeblendet</em></li>
+                <li><strong>Kraftstoff</strong> (Liter)</li>
+                <li><strong>Gepäck</strong> (kg)</li>
+            </ul>
+        </li>
+        <li>Die App berechnet die grafische Schwerpunktlage und das Gesamtabfluggewicht (Takeoff Weight) automatisch in Echtzeit bei jeder Eingabe.</li>
+    </ul>
+
+    <h2>3. Intelligenter Speicher (Getrennt nach Flugzeugtyp)</h2>
+    <ul>
+        <li><strong>Individuelles Merken:</strong> Die App merkt sich Ihre Eingaben für jedes Flugzeug <strong>vollkommen separat</strong> im Hintergrund auf Ihrem Smartphone.</li>
+        <li><strong>Kein ständiges Vertippen mehr:</strong> Wenn Sie z. B. bei der <em>Cessna 150</em> andere Standardgewichte fliegen als bei der vierstimmigen <em>Piper Archer</em>, speichert die App für jede Maschine exakt die jeweils letzten Werte ab. Beim Wechseln des Flugzeugtyps werden Ihre passenden persönlichen Daten sofort wieder geladen.</li>
+    </ul>
+
+    <div class="info-box">
+        <strong>4. Automatische Kraftstoff-Umrechnung (Liter in kg)</strong><br>
+        Sie können die Kraftstoffmenge bequem in <strong>Litern</strong> (wie in den Tanks gemessen) in die App eintragen. Die App rechnet das Volumen im Hintergrund automatisch mit der spezifischen Dichte von Flugkraftstoff (Avgas 0,72 kg/Liter) in das tatsächliche <strong>Gewicht in Kilogramm</strong> um und addiert dieses zum Gesamtgewicht.
+    </div>
+
+    <div class="warning-box">
+        <strong>5. Schutz der Stammdaten (Passwortsperre)</strong><br>
+        Die hinterlegten Leermassen (Empty Weight) und die dazugehörigen Schwerpunkte basieren auf den offiziellen Wägeberichten der jeweiligen Flugzeuge. Um lebensgefährliche Fehlberechnungen im Flugbetrieb zu verhindern, sind diese Felder standardmäßig <strong>gesperrt (schreibgeschützt)</strong>.
+        <ul>
+            <li><strong>Sicherheits-Schloss aktivieren:</strong> Sollten sich die offiziellen Stammdaten des Flugzeugs geändert haben (z. B. nach einer Neuwägung), klicken Sie auf den gelben Button <strong>„Bearbeiten“</strong>.</li>
+            <li><strong>PIN-Eingabe:</strong> Es öffnet sich ein modernes Sicherheitsfenster. Geben Sie dort die Admin-PIN (Standard: <code>1234</code>) ein und bestätigen Sie mit „Freischalten“.</li>
+            <li><strong>Änderung & Speichern:</strong> Die Felder werden nun grün freigeschaltet. Nach der Korrektur klicken Sie auf den grünen Button <strong>„Speichern“</strong>, um die Daten fest gegen unbeabsichtigtes Überschreiben zu verriegeln.</li>
+        </ul>
+    </div>
+
+    <h2>6. Auswertung ablesen</h2>
+    <ul>
+        <li><strong>Gewichts-Check:</strong> Das System signalisiert sofort, ob das maximale Abfluggewicht (MTOW) eingehalten wird.</li>
+        <li><strong>Schwerpunkt-Check:</strong> Das berechnete Center of Gravity (CG) wird permanent mit den vorderen und hinteren Grenzwerten des Herstellers abgeglichen.</li>
+        <li><strong>Ergebnis:</strong> Nur wenn der Punkt in der Grafik im zulässigen Bereich liegt (grüne Box), ist das Flugzeug innerhalb der sicheren Grenzen geladen. Bei Fehlern färbt sich die Box rot.</li>
+    </ul>
+
+    <div class="disclaimer-box">
+        <strong>Disclaimer:</strong> Unverbindliches Hilfsmittel. Nutzung auf eigene Gefahr. Keine Haftung für Fehler. Der verantwortliche Luftfahrzeugführer (PIC) muss jede Berechnung eigenverantwortlich anhand des Original-Flughandbuchs (POH) und des aktuellen Wägeberichts prüfen.
+    </div>
+    
+    <div class="copyright-text">
+        &copy; Copyright 2026 A. Schlagintweit
+    </div>
+</div>
+
+</body>
+</html>
