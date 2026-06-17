@@ -2,19 +2,98 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Impressum</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impressum | apps-for-pilots.de</title>
     <style>
-        body { background-color: #0f172a; display: flex; justify-content: center; padding: 40px; }
-        .img-container { max-width: 800px; width: 100%; }
-        img { width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .back-link { display: block; margin-top: 20px; color: #94a3b8; text-decoration: none; text-align: center; }
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0b1120; /* Dunkelblaues Design */
+            font-family: sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+        }
+
+        .impressum-container {
+            background-color: #0b1120;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 10px;
+        }
+
+        .content {
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        /* Orange E-Mail-Adresse */
+        .email-link {
+            color: #ff9900;
+            text-decoration: underline;
+        }
+
+        /* Orange Button */
+        .btn-home {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #ff9900;
+            color: #000000;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-home {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #ff9900; /* Auffälliges Orange */
+    color: #000000; /* Schwarze Schrift für guten Kontrast */
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+    border: none; /* Entfernt eventuelle Rahmen */
+}
+
+.btn-home:hover {
+    background-color: #e68a00; /* Etwas dunkleres Orange beim Hovern */
+}
     </style>
 </head>
 <body>
-    <div class="img-container">
-        <img src="impressum.jpg" alt="Impressum">
-        
-        <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+
+<div class="impressum-container">
+    <h1>Impressum | Legal Notice</h1>
+    <div class="content">
+        <p><strong>Angaben gemäß § 5 DDG:</strong><br>
+        Andreas Schlagintweit<br>
+        Hauptstr. 65<br>
+        91086 Aurachtal<br>
+        Deutschland</p>
+
+        <p><strong>Kontakt:</strong><br>
+        E-Mail: <a href="mailto:info@apps-for-pilots.de" class="email-link">info@apps-for-pilots.de</a><br>
+        Telefon: +49 178 1344464</p>
+
+        <p><strong>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:</strong><br>
+        Andreas Schlagintweit<br>
+        Hauptstr. 65<br>
+        91086 Aurachtal<br>
+        Deutschland</p>
     </div>
+
+    <a href="/" class="btn-home">← Zurück zur Startseite</a>
+</div>
+
 </body>
 </html>
