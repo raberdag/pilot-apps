@@ -2,20 +2,44 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impressum</title>
     <style>
-        body { background-color: #0f172a; text-align: center; padding: 50px; }
-        img { max-width: 100%; height: auto; border: 2px solid #f97316; }
-        .back-button { 
-            display: block; margin-top: 30px; padding: 10px 20px; 
-            background-color: #f97316; color: white; text-decoration: none; 
-            display: inline-block; border-radius: 5px; font-weight: bold;
+        body { 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+            text-align: center; 
+            padding: 40px 20px; 
+            font-family: sans-serif;
         }
+        /* Hier wird das Bild angepasst */
+        img { 
+            max-width: 80%;       /* Das Bild nimmt max. 80% des Bildschirms ein */
+            height: auto;         /* Proportionen bleiben erhalten */
+            border: 2px solid #f97316; 
+            border-radius: 8px;   /* Sorgt für sanft abgerundete Ecken */
+            margin-bottom: 30px;
+        }
+        .back-button { 
+            display: inline-block; 
+            padding: 12px 25px; 
+            background-color: #f97316; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover { background-color: #ea580c; }
     </style>
 </head>
 <body>
+
     <img src="impressum.jpg" alt="Impressum">
+    
     <br>
-    <a href="index.html" class="back-button">Zurück</a>
+    
+    <a href="index.html" class="back-button">← Zurück</a>
+
 </body>
 </html>
