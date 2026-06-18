@@ -12,14 +12,23 @@
             padding: 40px 20px; 
             font-family: sans-serif;
         }
-        /* Das Bild ist nun auf 48% der Bildschirmbreite begrenzt */
         img { 
-            max-width: 48%;       
+            /* Standard: Auf Handys fast volle Breite */
+            max-width: 90%;       
             height: auto;         
             border: 2px solid #f97316; 
             border-radius: 8px;   
             margin-bottom: 30px;
         }
+
+        /* Ab einer Bildschirmbreite von 768px (Tablets/PCs) 
+           wird das Bild auf maximal 50% verkleinert */
+        @media (min-width: 768px) {
+            img {
+                max-width: 50%;
+            }
+        }
+
         .back-button { 
             display: inline-block; 
             padding: 12px 25px; 
