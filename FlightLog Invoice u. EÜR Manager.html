@@ -1481,100 +1481,27 @@ function exportToCSV(type) {
         document.body.removeChild(link);
     }
 }
-// ==========================================
-// FAHRTKOSTEN-RECHNER (HOCHKOMPATIBLE VERSION)
-// ==========================================
-function berechneUndFuegeFahrtHinzu() {
-    const datum = document.getElementById('travel-date').value;
-    const zweck = document.getElementById('travel-desc').value.trim();
-    const art = document.getElementById('travel-type').value;
-    const km = parseFloat(document.getElementById('travel-km').value) || 0;
-
-    if (!datum || !zweck || km <= 0) {
-        alert("Bitte Datum, Zweck/Strecke und Kilometer eintragen!");
-        return;
-    }
-
-    let satz = 0.30;
-    let berechneteKm = km;
-    let textArt = "Dienstreise";
-
-    if (art === 'pendler') {
-        berechneteKm = km / 2;
-        textArt = "Pendlerpauschale (einfache Entfernung)";
-    }
-
-    let betrag = 0;
-    if (art === 'pendler' && berechneteKm > 20) {
-        betrag = (20 * 0.30) + ((berechneteKm - 20) * 0.38);
-    } else {
-        betrag = berechneteKm * satz;
-    }
-
-    const finaleBeschreibung = `Fahrtkosten: ${zweck} (${km} km, ${textArt})`;
-
-    const neueAusgabe = {
-        id: "EXP-" + Date.now(),
-        date: datum,
-        desc: finaleBeschreibung,
-        purpose: finaleBeschreibung,
-        amount: betrag
-    };
-
-    // Speichern in das System Ihrer Kollegen
-    if (typeof expenses !== 'undefined') {
-        expenses.push(neueAusgabe);
-        localStorage.setItem('flightlog_expenses', JSON.stringify(expenses));
-        
-        if (typeof renderEUR === 'function') renderEUR();
-        if (typeof renderStats === 'function') renderStats();
-        
-        document.getElementById('travel-desc').value = '';
-        document.getElementById('travel-km').value = '';
-        
-        alert(`Erfolgreich gebucht: ${betrag.toFixed(2).replace('.', ',')} € wurden hinzugefügt!`);
-    } else if (typeof addExpenseRow === 'function') {
-        addExpenseRow(datum, finaleBeschreibung, betrag);
-        if (typeof calculateEURTotals === 'function') calculateEURTotals();
-        if (typeof renderStats === 'function') renderStats();
-        
-        document.getElementById('travel-desc').value = '';
-        document.getElementById('travel-km').value = '';
-        
-        alert(`Erfolgreich hinzugefügt: ${betrag.toFixed(2).replace('.', ',')} € wurden eingetragen!`);
-    } else {
-        alert("Fehler: Das Ausgaben-Speichersystem wurde im Code nicht gefunden.");
-    }
-}
-
-// Setzt das Datum beim Start automatisch auf heute
-window.addEventListener('DOMContentLoaded', () => {
-    if(document.getElementById('travel-date')) {
-        document.getElementById('travel-date').valueAsDate = new Date();
-    }
-});
 // ========================================================
-// RECHNUNGSSTELLER-STAMMDATEN (EIGENE DATEN DES LEHRERS)
+// RECHNUNGSSTELLER-STAMMDATEN & AKTIONEN (PROFI-VERSION)
 // ========================================================
 
-// 1. Speichert alle Absender- und Bankdaten, sobald getippt wird
 function speichereMeineStammdaten() {
     const stammdaten = {
-        name: document.getElementById('my-name').value,
-        title: document.getElementById('my-title').value,
-        address: document.getElementById('my-address').value,
-        phone: document.getElementById('my-phone').value,
-        email: document.getElementById('my-email').value,
-        bankName: document.getElementById('my-bank-name').value,
-        iban: document.getElementById('my-iban').value,
-        bic: document.getElementById('my-bic').value,
-        taxId: document.getElementById('my-tax-id').value,
-        contact: document.getElementById('my-contact').value
+        name: document.getElementById('my-name')?.value || '',
+        title: document.getElementById('my-title')?.value || '',
+        address: document.getElementById('my-address')?.value || '',
+        phone: document.getElementById('my-phone')?.value || '',
+        email: document.getElementById('my-email')?.value || '',
+        bankName: document.getElementById('my-bank-name')?.value || '',
+        iban: document.getElementById('my-iban')?.value || '',
+        bic: document.getElementById('my-bic')?.value || '',
+        taxId: document.getElementById('my-tax-id')?.value || '',
+        contact: document.getElementById('my-contact')?.value || ''
     };
     localStorage.setItem('flightlog_teacher_profile', JSON.stringify(stammdaten));
-    
-    // Aktualisiert die Umschlag-Rücksendezeile live beim Tippen
-    aktualisiereUmschlagZeile(stammdaten.name, stammdaten.address);
+    if (typeof aktualisiereUmschlagZeile === 'function') {
+        aktualisiereUmschlagZeile(stammdaten.name, stammdaten.address);
+    }
 }
 
 function ladeMeineStammdaten() {
@@ -1590,41 +1517,116 @@ function ladeMeineStammdaten() {
         if(document.getElementById('my-bic')) document.getElementById('my-bic').value = daten.bic || '';
         if(document.getElementById('my-tax-id')) document.getElementById('my-tax-id').value = daten.taxId || '';
         if(document.getElementById('my-contact')) document.getElementById('my-contact').value = daten.contact || '';
-        
-        // Zeile direkt nach dem Eintragen befüllen
-        aktualisiereUmschlagZeile(daten.name, daten.address);
-    }
-}
-
-function aktualisiereUmschlagZeile(name, adresse) {
-    const returnLineEl = document.getElementById('window-return-line');
-    if (returnLineEl) {
-        if (name || adresse) {
-            // Ersetzt Zeilenumbrüche im Adressfeld durch einen Trennpunkt
-            const saubereAdresse = adresse ? adresse.replace(/\r?\n|\r/g, " • ") : "";
-            returnLineEl.innerText = `${name} • ${saubereAdresse}`;
-        } else {
-            returnLineEl.innerText = "Bitte Stammdaten oben links eintragen...";
+        if (typeof aktualisiereUmschlagZeile === 'function') {
+            aktualisiereUmschlagZeile(daten.name, daten.address);
         }
     }
 }
 
-// Überwachung für alle Felder aktivieren
-window.addEventListener('DOMContentLoaded', () => {
-    // ZUERST laden, damit die Felder beim Überwachen schon Daten enthalten!
-    ladeMeineStammdaten();
+// ==========================================
+// SYSTEM-BACKUP: REINER JAVASCRIPT-EXPORT & IMPORT
+// ==========================================
+function exportAllData() {
+    const backupObj = {
+        teacher_profile: localStorage.getItem('flightlog_teacher_profile'),
+        kunden: localStorage.getItem('flightlog_kunden'),
+        expenses: localStorage.getItem('flightlog_expenses'),
+        invoices: localStorage.getItem('flightlog_invoices') || localStorage.getItem('invoices')
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "flightlog_all_data_backup_" + new Date().getFullYear() + ".json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function importAllData() {
+    const fileInput = document.getElementById('import-file');
+    if (!fileInput || fileInput.files.length === 0) return;
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
     
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            if (confirm("Achtung: Beim Importieren werden alle eventuell vorhandenen Daten auf DIESEM Gerät überschrieben und das Programm neu geladen. Möchten Sie fortfahren?")) {
+                if (importedData.teacher_profile) localStorage.setItem('flightlog_teacher_profile', importedData.teacher_profile);
+                if (importedData.kunden) localStorage.setItem('flightlog_kunden', importedData.kunden);
+                if (importedData.expenses) localStorage.setItem('flightlog_expenses', importedData.expenses);
+                if (importedData.invoices) {
+                    localStorage.setItem('flightlog_invoices', importedData.invoices);
+                    localStorage.setItem('invoices', importedData.invoices);
+                }
+                alert("🎉 Perfekt! Alle Stammdaten, Kunden, Rechnungen und Ausgaben wurden erfolgreich übertragen.");
+                window.location.reload();
+            } else {
+                fileInput.value = '';
+            }
+        } catch (err) {
+            alert("Fehler: Die Datei konnte nicht gelesen werden. Stellen Sie sicher, dass es eine echte flightlog-Backup-Datei ist.");
+            fileInput.value = '';
+        }
+    };
+    reader.readAsText(file);
+}
+
+// AUTOMATISCHE UND SICHERE INJEKTION DER BOX IN DIE STATISTIK
+function injiziereBackupBoxInStatistik() {
+    // Sucht das Element mit den Geschäftsstatistiken im Hauptprogramm
+    const statsView = document.getElementById('view-stats');
+    if (statsView && !document.getElementById('import-file')) {
+        const heading = statsView.querySelector('h2');
+        if (heading) {
+            const container = document.createElement('div');
+            container.className = 'no-print';
+            container.style.cssText = 'background: #edf2f7; padding: 15px; border-radius: 6px; margin-top: 15px; margin-bottom: 25px; border-left: 5px solid #16a34a; font-family: Arial, sans-serif; color: #2d3748; text-align: left; box-sizing: border-box; width: 100%; display: block; clear: both;';
+            
+            container.innerHTML = `
+                <strong style="color: #1e3a8a; display: block; margin-bottom: 6px;">🔄 Daten sichern / Gerät wechseln (Backup)</strong>
+                <p style="font-size: 0.85em; margin: 0 0 12px 0; color: #4a5568;">
+                    Da Ihre Daten rein lokal im Browser gespeichert sind, wandern sie nicht automatisch in eine Cloud. Sichern Sie Ihre Daten hier als Datei, um sie auf ein anderes iPad/PC zu übertragen:
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                    <button onclick="exportAllData()" class="btn btn-accent" style="background: #16a34a; color: white; padding: 6px 12px; font-size: 0.9em; font-weight: bold; border: none; cursor: pointer; border-radius: 4px;">💾 1. Daten sichern (Export)</button>
+                    <div style="background: #e2e8f0; padding: 5px 10px; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.85em; font-weight: bold; color: #2d3748;">2. Daten einlesen (Import):</span>
+                        <input type="file" id="import-file" accept=".json" onchange="importAllData()" style="font-size: 0.8em; max-width: 95px; color: transparent; background: transparent; border: none; padding: 0;">
+                    </div>
+                </div>
+            `;
+            // Setzt den Kasten vollautomatisch exakt unter die Überschrift der Statistik
+            heading.parentNode.insertBefore(container, heading.nextSibling);
+        }
+    }
+}
+
+// Startvorgänge beim Laden der Seite koordinieren
+window.addEventListener('DOMContentLoaded', () => {
+    ladeMeineStammdaten();
+    injiziereBackupBoxInStatistik();
+    
+    // Überwachung für die Stammdatenfelder aktivieren
     const alleFelder = [
         'my-name', 'my-title', 'my-address', 'my-phone', 'my-email',
         'my-bank-name', 'my-iban', 'my-bic', 'my-tax-id', 'my-contact'
     ];
-    
     alleFelder.forEach(id => {
         const el = document.getElementById(id);
-        if(el) {
-            el.addEventListener('input', speichereMeineStammdaten);
-        }
+        if(el) el.addEventListener('input', speichereMeineStammdaten);
     });
+    
+    // Sicherheitsnetz: Falls die App die Ansichten dynamisch umschaltet, 
+    // injizieren wir die Box bei jedem Klick auf den Statistik-Button neu
+    const statsTabButton = document.querySelector('[onclick*="stats"]') || document.querySelector('[onclick*="Stats"]');
+    if (statsTabButton) {
+        statsTabButton.addEventListener('click', () => {
+            setTimeout(injiziereBackupBoxInStatistik, 50);
+        });
+    }
 });
 </script>
 </body>
