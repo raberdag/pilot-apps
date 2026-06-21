@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gebrauchsanweisung & Datenschutz - FlightLog Invoice Manager</title>
+    <style>
+        :root {
+            --bg-color: #0F172A;
+            --orange-bright: #F97316;
+            --text-color: #FFFFFF;
+            --card-bg: #1E293B;
+            --border-color: #334155;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--orange-bright);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--orange-bright);
+            font-size: 2.2em;
+            margin: 0 0 10px 0;
+        }
+
+        h2 {
+            color: var(--orange-bright);
+            font-size: 1.5em;
+            margin-top: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .badge-secure {
+            display: inline-block;
+            background-color: #16A34A;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.privacy {
+            border-left: 5px solid #16A34A;
+        }
+
+        .card.step {
+            border-left: 5px solid var(--orange-bright);
+        }
+
+        ol, ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            color: var(--orange-bright);
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.85em;
+            color: #94A3B8;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background-color: var(--orange-bright);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: #EA580C;
+        }
+
+        @media print {
+            body { background: white; color: black; }
+            .card { background: white; color: black; border: 1px solid #ccc; box-shadow: none; }
+            h1, h2, .highlight { color: #000; }
+            .btn-back, .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>FlightLog Invoice & EÜR Manager</h1>
+        <p style="font-size: 1.2em; margin: 0;">Gebrauchsanweisung & Wichtige Hinweise</p>
+        <div class="badge-secure">🛡️ 100% Sicherer Lokaler Datenschutz</div>
+    </div>
+
+    <!-- 1. Einleitung & Datenschutz -->
+    <div class="card privacy">
+        <h2 style="margin-top: 0; border: none; padding: 0;">🔒 Wichtige Datenschutzerklärung vorab</h2>
+        <p>Die Sicherheit Ihrer Daten hat oberste Priorität. Dieses Programm arbeitet nach dem Prinzip der <strong>vollständigen lokalen Datenhaltung</strong>. Das bedeutet:</p>
+        <ul>
+            <li><strong>Keine Server-Übertragung:</strong> Keines Ihrer Dokumente, kein Kundenname, keine Steuernummer und keine Umsätze werden jemals ins Internet oder auf einen fremden Server geladen.</li>
+            <li><strong>Reiner Browserspeicher:</strong> Alle Daten verbleiben ausschließlich im sogenannten <span class="highlight">LocalStorage</span> Ihres eigenen Webbrowsers auf Ihrem Gerät.</li>
+            <li><strong>Volle Kontrolle:</strong> Sie sind der einzige Herr über Ihre Daten. Niemand im Internet kann Ihre Abrechnungen einsehen.</li>
+        </ul>
+    </div>
+
+    <!-- 2. Stammdaten einrichten -->
+    <h2>🛠️ Schritt 1: Ihre eigenen Stammdaten einrichten</h2>
+    <div class="card step">
+        <p>Beim ersten Start ist das Programm komplett leer. Um Ihre eigenen Daten als Rechnungssteller dauerhaft zu hinterlegen, gehen Sie wie folgt vor:</p>
+        <ol>
+            <li>Öffnen Sie die App im ganz normalen Browserfenster.</li>
+            <li>Klicken Sie ganz oben links direkt in den Briefkopf (wo hellgrauer Text wie <em>"Ihr Name..."</em> steht).</li>
+            <li>Tragen Sie dort Ihren <strong>Namen, Ihre Tätigkeit, Adresse, Telefonnummer und E-Mail-Adresse</strong> ein.</li>
+            <li>Scrollen Sie ans Ende der Rechnungsmaske zum Fußtext. Tragen Sie dort Ihre <strong>Bankverbindung (Bankname, IBAN, BIC)</strong>, Ihre <strong>Steuernummer</strong> und optionale rechtliche Angaben ein.</li>
+            <li><span class="highlight">Das Beste:</span> Sie müssen nirgends auf "Speichern" klicken! Das Programm merkt sich jeden Buchstaben vollautomatisch, während Sie tippen. Beim nächsten Öffnen der App ist alles wieder da.</li>
+        </ol>
+    </div>
+
+
+
+    <!-- 3. Rechnungen schreiben & Kunden nutzen -->
+    <h2>✈️ Schritt 2: Rechnungen schreiben & Kundendatenbank nutzen</h2>
+    <div class="card step">
+        <ul>
+            <li><strong>Kunden anlegen:</strong> Tippen Sie bei einer neuen Rechnung den Namen und die Adresse des Flugschülers oder Charterkunden ein. Sobald Sie auf <span class="highlight">"Speichern & PDF öffnen"</span> klicken, wandert der Kunde automatisch in Ihr lokales Adressbuch.</li>
+            <li><strong>Blitz-Vorschlag (Autocomplete):</strong> Wenn Sie das nächste Mal eine Rechnung für diesen Kunden schreiben, tippen Sie einfach die ersten zwei Buchstaben des Namens ein. Die App vervollständigt den Namen automatisch und zieht die dazugehörige Adresse blitzschnell aus dem Speicher.</li>
+            <li><strong>Adressfeld leeren:</strong> Wenn Sie einen neuen Namen eingeben, wird das Adressfeld automatisch geleert, damit keine alten Daten stehen bleiben.</li>
+            <li style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                <strong style="color: #60A5FA;">🔄 Tipp bei Adressänderungen (Umzug):</strong> 
+                Wenn ein Flugschüler umzieht, müssen Sie keinen komplizierten Datenbank-Eintrag löschen. Wählen Sie einfach den Namen aus, löschen Sie die alte Adresse aus dem Feld und tippen Sie die neue Adresse ein. Sobald Sie die Rechnung speichern, wird der alte Eintrag im Hintergrund automatisch überschrieben und für die Zukunft aktualisiert!
+            </li>
+        </ul>
+    </div>
+
+    <!-- 4. Fahrtkosten-Rechner -->
+    <h2>🚗 Schritt 3: Fahrtkosten & Reisekosten abrechnen</h2>
+    <div class="card step">
+        <p>Wechseln Sie oben im Menü auf den Reiter <strong>"EÜR (Finanzamt)"</strong>. Hier finden Sie den integrierten Fahrtkosten-Rechner:</p>
+        <ul>
+            <li>Wählen Sie das Datum und tragen Sie den Zweck bzw. die Strecke ein.</li>
+            <li>Wählen Sie die <strong>Fahrt-Art</strong>: <em>Dienstreise</em> (berechnet Hin- und Rückweg mit vollen 0,30 €/km) oder <em>Heimatflugplatz</em> (berechnet die Pendlerpauschale für die einfache Entfernung inklusive der Erhöhung ab dem 21. km auf 0,38 €/km).</li>
+            <li>Geben Sie die Kilometer ein und klicken Sie auf <span class="highlight">"Fahrt buchen"</span>. Die Kosten landen sofort in Ihren Betriebsausgaben und werden vom Gewinn abgezogen.</li>
+        </ul>
+    </div>
+
+    <!-- 5. Zwei goldene Regeln & Datentransfer -->
+    <h2>⚠️ Zwei goldene Regeln & Gerätewechsel (Datentransfer)</h2>  <div style="background:
+    <div class="card" style="border-left: 5px solid #EF4444; margin-bottom: 30px;">
+        <ol>
+            <li><strong>Keinen Inkognito-Modus nutzen:</strong> Wenn Sie die App im "Privaten Modus" (Inkognito) Ihres Browsers öffnen, löscht der Browser aus Sicherheitsgründen alle Ihre Daten, sobald Sie das Tab schließen! Nutzen Sie immer den normalen Browsermodus.</li>
+            <li><strong>Gerätewechsel / Plattformwechsel:</strong> Da Ihre Daten ausschließlich lokal in Ihrem aktuellen Browser gespeichert sind, führt ein Wechsel des Geräts (z.B. vom PC aufs iPad) oder des Browsers dazu, dass Sie in einer leeren App starten! Die Daten wandern NICHT automatisch über eine Cloud mit.</li> <li>Sie können aber im Statistik-Teil der App die Export- und Importfunktion verwenden. Exportieren sie Ihre App-Daten, senden diese an Ihr Zweitgerät und importieren sie die Daten dann auf Ihrem anderen Gerät in die dort installierte App. So können Sie nahtlos auf dem Zweitgerät weiterarbeiten. Sollten Sie auf dem Zweitgerät neue Rechnungen angelegt haben, müssen Sie diese dann wieder per Export und Import auf Ihr Erstgerät übertragen. Ansonsten sind diese neuen Daten auf dem Erstgerät nicht verfügbar</li>
+        </ol>
+
+        </div>
+
+    <div class="no-print" style="text-align: center;">
+        <a href="index.html" class="btn-back">← Zurück zur Hauptseite / App</a>
+    </div>
+
+    <div class="footer">
+        FlightLog Invoice & EÜR Manager • Handbuch Version 1.2<br>
+        © 2026 Andreas Schlagintweit • Alle Rechte vorbehalten.
+    </div>
+
+</div>
+
+<!-- NEU: Die magische Umzugs-Logik im JavaScript -->
+<script>
+// 1. Packt alle vier Speicherbereiche Ihrer App in eine einzige Datei und lädt sie herunter
+function exportAllData() {
+    const backupObj = {
+        teacher_profile: localStorage.getItem('flightlog_teacher_profile'),
+        kunden: localStorage.getItem('flightlog_kunden'),
+        expenses: localStorage.getItem('flightlog_expenses'),
+        // Falls Ihre Rechnungen unter 'flightlog_invoices' oder ähnlich gespeichert sind, 
+        // fügen wir die Standardnamen Ihrer App hinzu:
+        invoices: localStorage.getItem('flightlog_invoices') || localStorage.getItem('invoices')
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "flightlog_all_data_backup.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+// 2. Liest die hochgeladene Datei aus und schreibt sie eins zu eins in das neue Gerät
+// Liest die hochgeladene Datei direkt beim Auswählen aus
+function importAllData() {
+    const fileInput = document.getElementById('import-file');
+    if (!fileInput || fileInput.files.length === 0) return;
+
+    const file = fileInput.files[0]; // Holt die ausgewählte Datei
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            if (confirm("Achtung: Beim Importieren werden alle eventuell vorhandenen Daten auf DIESEM Gerät überschrieben. Möchten Sie fortfahren?")) {
+                
+                if (importedData.teacher_profile) localStorage.setItem('flightlog_teacher_profile', importedData.teacher_profile);
+                if (importedData.kunden) localStorage.setItem('flightlog_kunden', importedData.kunden);
+                if (importedData.expenses) localStorage.setItem('flightlog_expenses', importedData.expenses);
+                
+                if (importedData.invoices) {
+                    localStorage.setItem('flightlog_invoices', importedData.invoices);
+                    localStorage.setItem('invoices', importedData.invoices);
+                }
+
+                alert("🎉 Perfekt! Alle Stammdaten, Kunden, Rechnungen und Ausgaben wurden erfolgreich auf dieses Gerät übertragen. Sie können die App jetzt wie gewohnt nutzen!");
+                window.location.href = "index.html"; 
+            } else {
+                // Falls abgebrochen wird, setzen wir das Feld zurück
+                fileInput.value = '';
+            }
+        } catch (err) {
+            alert("Fehler: Die Datei konnte nicht gelesen werden. Stellen Sie sicher, dass es eine echte flightlog-Backup-Datei ist.");
+            fileInput.value = '';
+        }
+    };
+    reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>
