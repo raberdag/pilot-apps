@@ -1628,6 +1628,51 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// ========================================================
+// AUTOMATISCHE FORMATIERUNG DER CUVART-RÜCKSENDEZEILE
+// ========================================================
+function aktualisiereUmschlagZeile(name, adresse) {
+    // 1. Falls keine Daten übergeben wurden, holen wir sie uns live aus den Feldern oben links
+    const aktuellerName = name || document.getElementById('my-name')?.value || '';
+    const aktuelleAdresse = adresse || document.getElementById('my-address')?.value || '';
+    
+    // 2. Sucht das Element im Brieffenster
+    const returnLineEl = document.getElementById('window-return-line');
+    
+    if (returnLineEl) {
+        if (aktuellerName || aktuelleAdresse) {
+            // Ersetzt Zeilenumbrüche im Adressfeld durch einen schönen Trennpunkt •
+            const saubereAdresse = aktuelleAdresse.replace(/\r?\n|\r/g, " • ");
+            returnLineEl.innerText = `${aktuellerName} • ${saubereAdresse}`;
+        } else {
+            returnLineEl.innerText = "Bitte Stammdaten oben links eintragen...";
+        }
+    }
+}
+
+// Überwachung für alle Stammdatenfelder aktivieren
+window.addEventListener('DOMContentLoaded', () => {
+    ladeMeineStammdaten();
+    if (typeof injiziereBackupBoxInStatistik === 'function') {
+        injiziereBackupBoxInStatistik();
+    }
+    
+    const alleFelder = [
+        'my-name', 'my-title', 'my-address', 'my-phone', 'my-email',
+        'my-bank-name', 'my-iban', 'my-bic', 'my-tax-id', 'my-contact'
+    ];
+    
+    alleFelder.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            // Reagiert sofort, wenn ein Kollege oben links tippt
+            el.addEventListener('input', () => {
+                speichereMeineStammdaten();
+                aktualisiereUmschlagZeile(); // Zeichnet die Zeile live mit
+            });
+        }
+    });
+});
 </script>
 </body>
 </html>
