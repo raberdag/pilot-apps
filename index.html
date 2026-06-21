@@ -149,6 +149,10 @@
         <p style="color: var(--text-main);">
             Diese Apps sind komplett kostenlos, werbefrei und tracken keine Daten. Ich entwickle sie in meiner Freizeit für uns Piloten und Interessierte. Wenn Dir ein Tool gefällt und es Dir im Cockpit hilft, freue ich mich riesig, wenn Du diese Seite bei Deinen Freunden und bekannten Piloten weiterempfiehlst.
         </p>
+<!-- Dieser Button bringt sein eigenes Design mit und lässt andere Boxen in Ruhe -->
+<button id="shareBtn" onclick="copyToClipboard()" style="background-color: #EA580C; color: #ffffff; border: 2px solid #ff7900; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; display: block; margin: 20px auto;">
+  🔗 Link zu dieser Webseite kopieren
+</button>
     </div>
 
     <!-- Haftungsausschluss / Disclaimer -->
@@ -185,6 +189,21 @@
 </footer>
 
 </div>
-
+<!-- Dieser Code sorgt dafür, dass das Kopieren im Hintergrund funktioniert -->
+<script>
+function copyToClipboard() {
+  const currentUrl = window.location.href; 
+  navigator.clipboard.writeText(currentUrl).then(() => {
+    const btn = document.getElementById('shareBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "✅ Der Webseiten-Link wurde zum Weitergeben in die Zwischenablage kopiert!";
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+    }, 2000);
+  }).catch(err => {
+    console.error('Fehler: ', err);
+  });
+}
+</script>
 </body>
 </html>
