@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anleitung - Checklisten App</title>
+    <style>
+        body { margin: 0; background: #0f172a; color: white; font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 8px; border: 1px solid #334155; }
+        h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; }
+        h2 { color: #38bdf8; font-size: 1.2rem; margin-top: 30px; }
+        p, li { color: #cbd5e1; line-height: 1.6; }
+        
+        ul { padding-left: 0; list-style-type: none; }
+        li { margin-bottom: 18px; }
+        
+        .mock-btn { 
+            display: inline-block; 
+            padding: 4px 10px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            font-size: 0.8rem; 
+            color: #0f172a; 
+            text-align: center; 
+            border: none;
+            margin-right: 8px;
+        }
+        .btn-blue { background-color: #38bdf8; }
+        .btn-green { background-color: #10b981; }
+        .btn-red { background-color: #ef4444; color: white; }
+
+        /* Orangefarbener Button für Zurück */
+        .nav-btn { 
+            display: block; 
+            margin: 40px auto 0 auto; 
+            padding: 12px 20px; 
+            background-color: #f97316; 
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold; 
+            text-align: center; 
+            border-radius: 6px; 
+            width: fit-content; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bedienungsanleitung</h1>
+    
+    <p>Willkommen bei deiner Checklisten-App. Hier findest du eine kurze Übersicht zur Bedienung.</p>
+
+    <h2>Struktur</h2>
+    <p>Jedes Flugzeugmodell bietet dir eine <strong>Normal-Checkliste</strong> (für den Routinebetrieb) und eine <strong>Notfall-Checkliste</strong> für kritische Situationen.</p>
+
+    <h2>Bedienung</h2>
+    <p>Wir nutzen zwei Haupt-Bedienelemente zur Navigation:</p>
+    <ul>
+        <li><span class="mock-btn btn-blue">Flugzeug auswählen</span> : Kehre zurück zur globalen Flugzeugauswahl.</li>
+        <li><span class="mock-btn btn-green">Menü</span> : Kehre zurück zur Übersichtsebene der aktuellen Checklisten.</li>
+    </ul>
+
+    <p>Die Checklisten selbst sind für die schnelle Anwendung direkt am Flugzeug optimiert:</p>
+    <ul>
+        <li><strong>Punkte bearbeiten:</strong> Nachdem du einen Checklistenpunkt am Flugzeug erfüllt hast, kannst du ihn durch einfaches Antippen "deaktivieren". Er wird sofort in ein dezentes Grau ausgeblendet.</li>
+        <li><strong>Korrektur:</strong> Durch erneutes Antippen kannst du einen bereits deaktivierten Punkt jederzeit wieder aktivieren.</li>
+        <li style="margin-top: 10px;"><strong>Reset:</strong> Wenn du alle Punkte gesammelt zurücksetzen möchtest, nutze den Button:</li>
+        <li><span class="mock-btn btn-red">Reset Liste</span> : Aktiviert alle deaktivierten Checklistenpunkte in einem Schritt zurück in den Ausgangszustand.</li>
+    </ul>
+
+    <a href="index.html" class="nav-btn">Zurück zur Startseite</a>
+</div>
+
+</body>
+</html>
