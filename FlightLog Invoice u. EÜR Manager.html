@@ -783,11 +783,12 @@
             <td><input type="number" class="item-qty" value="${qty}" oninput="calcInvoiceTotal()" style="text-align:right;"></td>
             <td>
                 <select class="item-unit" onchange="handleUnitChange(this)">
-                    <option value="Min." ${unit==='Min.'?'selected':''}>Min.</option>
-                    <option value="Std." ${unit==='Std.'?'selected':''}>Std.</option>
-                    <option value="Pausch." ${unit==='Pausch.'?'selected':''}>Pausch.</option>
-		    <option value="Einheit." ${unit==='Einheit.'?'selected':''}>Pausch.</option>
-                </select>
+                <option value="Min." ${unit==='Min.'?'selected':''}>Min.</option>
+                <option value="Std." ${unit==='Std.'?'selected':''}>Std.</option>
+                <option value="Pausch." ${unit==='Pausch.'?'selected':''}>Pausch.</option>
+		<option value="Stück" ${unit==='Stück'?'selected':''}>Stück</option>
+                <option value="Einheit" ${unit==='Einheit'?'selected':''}>Einheit</option>
+            </select>
             </td>
             <td><input type="number" class="item-price" value="${price.toFixed(2)}" step="0.01" oninput="calcInvoiceTotal()" style="text-align:right;"></td>
             <td class="text-right item-row-total">0,00 €</td>
