@@ -313,8 +313,78 @@
             .nav-bar, .no-print, .btn, .no-print-zone, #action-column, .delete-btn-col, .action-cell, .modal-overlay { 
                 display: none !important; 
             }
-            
-            /* 2. Seitenränder für den Drucker optimieren */
+/* Löscht leere Notizfelder im PDF radikal und fehlerfrei von der Seite */
+            .hide-if-empty {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+   /* Blendet den Eingaberahmen und Pfeile des Datums beim Drucken aus */
+            .item-date {
+                border: none !important;
+                background: transparent !important;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                padding: 0 !important;
+            }
+/* REPARATUR: NUR DIE BESCHREIBUNGS-ZELLE FLIESST UNTEREINANDER */
+            #invoice-items td:first-child {
+                display: block !important; /* Löst die Quetsch-Zone NUR in Spalte 1 auf */
+                width: 100% !important;
+                border: none !important;
+            }
+
+            /* Alle anderen Spalten (Menge, Einheit, Preise) bleiben fest auf ihrer Position! */
+            #invoice-items td:not(:first-child) {
+                display: table-cell !important;
+                vertical-align: top !important;
+                padding-top: 5px !important;
+            }
+
+            /* Das Datum steht sauber ganz oben links */
+            .item-date {
+                border: none !important;
+                background: transparent !important;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                padding: 0 !important;
+                display: inline-block !important;
+                margin-right: 10px !important;
+                width: auto !important;
+                font-weight: bold;
+            }
+
+            /* Die Hauptbeschreibung (Dropdown) steht direkt neben dem Datum */
+            .item-desc, select.item-unit {
+                border: none !important;
+                background: transparent !important;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                padding: 0 !important;
+                display: inline-block !important;
+                width: auto !important;
+            }
+
+            /* Ihre Ergänzung bricht sauber auf eine NEUE Zeile NUR unter dem Text um */
+            .item-note {
+                border: none !important;
+                background: transparent !important;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                padding: 0 !important;
+                display: block !important; /* Zwingt die Notiz auf eine neue Zeile */
+                margin-top: 4px !important;
+                color: #4a5568 !important; /* Schickes, dezentes Dunkelgrau */
+                width: 100% !important;
+                font-size: 0.95em !important;
+            }            /* 2. Seitenränder für den Drucker optimieren */
             body { 
                 background: white; 
                 padding: 0; 
@@ -852,7 +922,7 @@
         if (tbody) {
             tbody.innerHTML = '';
             addItemRow('Praktische Flugausbildung (Blockzeit)', 0, 'Min.', 1.00);
-            addItemRow('Theoretischer Unterricht / Briefing', 0, 'Std.', 0.00);
+            
         }
         
         document.getElementById('btn-delete-current').style.display = 'none';
@@ -1673,6 +1743,130 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+});
+// ========================================================
+// AUTOMATISCHE INJEKTION: DATUMSSPALE & NOTIZTEXT (SICHER)
+// ========================================================
+window.addEventListener('DOMContentLoaded', () => {
+    
+    // HILFSFUNKTION: Setzt Datum und ein zusätzliches Notizfeld in die Zeile ein
+    function fuegeDatumUndNotizfeldEin(tr) {
+        if (!tr) return;
+        const firstTd = tr.querySelector('td');
+        
+        // Falls bereits umgebaut, abbrechen
+        if (!firstTd || firstTd.querySelector('.item-date')) return;
+        
+        const originalesSelect = firstTd.querySelector('select');
+        if (originalesSelect) {
+            // 1. Holt das aktuelle Rechnungsdatum von oben rechts
+            const invDateEl = document.getElementById('invoice-date');
+            const standardDatum = invDateEl && invDateEl.value ? invDateEl.value : new Date().toISOString().split('T');
+            
+            // 2. Erstellt das Datums-Dropdown
+            const dateInput = document.createElement('input');
+            dateInput.type = 'date';
+            dateInput.className = 'item-date';
+            dateInput.value = standardDatum;
+            dateInput.style.cssText = "width: 130px; font-size: 0.9em; padding: 2px; box-sizing: border-box; flex-shrink: 0;";
+            
+            // 3. Erstellt das neue, manuelle Textfeld für Ihre Zusätze
+            const noteInput = document.createElement('input');
+            noteInput.type = 'text';
+            noteInput.className = 'item-note hide-if-empty'; // Startet standardmäßig unsichtbar im Druck!
+            noteInput.placeholder = "Ergänzung (z.B. 3 Flüge, Kennzeichen...)";
+            noteInput.style.cssText = "flex-grow: 1; min-width: 150px; font-size: 0.95em; padding: 3px; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 4px;";
+            
+            // Überwacht die Tastatureingabe: Wenn Text drinsteht, darf es gedruckt werden
+            noteInput.addEventListener('input', function() {
+                if (this.value.trim() === '') {
+                    this.classList.add('hide-if-empty');
+                } else {
+                    this.classList.remove('hide-if-empty');
+                }
+            });
+
+            // 4. Verwandelt die Spalte in eine Flexbox für den Bildschirm
+            firstTd.style.cssText = "display: flex; gap: 8px; align-items: center; border-bottom: none; width: 100%; box-sizing: border-box;";
+            originalesSelect.style.cssText = "max-width: 250px; flex-shrink: 0; padding: 3px;";
+            
+            // Elemente in die Zelle einsortieren
+            firstTd.insertBefore(dateInput, firstTd.firstChild);
+            firstTd.appendChild(noteInput);
+        }
+    }
+
+    // Kernfunktion: Scannt alle Zeilen und verarztet sie
+    function verarzteAlleZeilen() {
+        document.querySelectorAll('#invoice-items tr').forEach(tr => {
+            fuegeDatumUndNotizfeldEin(tr);
+        });
+    }
+
+    // DIE LICHTSCHRANKE (MutationObserver)
+    const targetTableBody = document.getElementById('invoice-items');
+    if (targetTableBody) {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeName === 'TR') {
+                            fuegeDatumUndNotizfeldEin(node);
+                        }
+                    });
+                }
+            });
+        });
+        observer.observe(targetTableBody, { childList: true });
+    }
+
+    // Startsicherung koordinieren
+    verarzteAlleZeilen();
+
+    // Sicherheit bei Reiterwechselen
+    const rechnungsTabButton = document.querySelector('[onclick*="invoice"]') || document.querySelector('[onclick*="Invoice"]');
+    if (rechnungsTabButton) {
+        rechnungsTabButton.addEventListener('click', () => {
+            setTimeout(verarzteAlleZeilen, 50);
+        });
+    }
+
+    // Überwachung des Buttons für neue Zeilen
+    const addBtn = document.querySelector('button[onclick*="addItemRow"]');
+    if (addBtn) {
+        addBtn.removeAttribute('onclick');
+        addBtn.addEventListener('click', () => {
+            addItemRow('', 0, 'Min.', 1.00);
+        });
+    }
+
+    // Sichert den Zusatztext beim Klick auf Speichern im Archiv mit ab
+    const originalSaveInvoice = window.saveInvoice;
+    if (typeof originalSaveInvoice === 'function') {
+        window.saveInvoice = function() {
+            originalSaveInvoice();
+            const invIdEl = document.getElementById('invoice-id');
+            if (invIdEl && invIdEl.value.trim()) {
+                const invId = invIdEl.value.trim();
+                const invoices = JSON.parse(localStorage.getItem('flightlog_invoices') || '{}');
+                
+                if (invoices[invId] && invoices[invId].items) {
+                    const dateInputs = document.querySelectorAll('#invoice-items .item-date');
+                    const noteInputs = document.querySelectorAll('#invoice-items .item-note');
+                    
+                    invoices[invId].items.forEach((item, index) => {
+                        if (dateInputs[index]) item.date = dateInputs[index].value;
+                        if (noteInputs[index] && noteInputs[index].value.trim()) {
+                            if (!item.desc.includes(noteInputs[index].value.trim())) {
+                                item.desc = item.desc + " " + noteInputs[index].value.trim();
+                            }
+                        }
+                    });
+                    localStorage.setItem('flightlog_invoices', JSON.stringify(invoices));
+                }
+            }
+        };
+    }
 });
 </script>
 </body>
