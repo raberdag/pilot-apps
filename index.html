@@ -14,81 +14,171 @@
             --btn-hover: #ea580c;
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
-            text-align: center; 
-            padding: 40px 20px; 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            line-height: 1.6; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
         }
-        
+
         .container { max-width: 850px; margin: 0 auto; }
-        
+
         h1 { font-size: 32px; margin-bottom: 5px; color: var(--text-main); }
         .brand-accent { color: var(--accent-orange); }
-        
+
         .subtitle { font-size: 16px; margin-bottom: 40px; color: var(--text-muted); }
         .lang-sep { color: var(--accent-orange); margin: 0 8px; }
-        
+
         .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 50px; }
-        .app-card { 
-            background: var(--card-bg); 
-            border-radius: 14px; 
-            padding: 25px; 
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); 
-            text-align: left; 
-            display: flex; 
-            flex-direction: column; 
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
             justify-content: space-between;
             border: 1px solid #334155;
         }
-        
+
         .app-title { font-size: 22px; font-weight: bold; margin: 0 0 12px 0; color: var(--text-main); border-bottom: 2px solid var(--accent-orange); padding-bottom: 5px; }
         .app-desc { font-size: 14px; margin-bottom: 20px; flex-grow: 1; color: var(--text-main); }
         .en-desc { display: block; color: var(--text-muted); font-style: italic; margin-top: 8px; border-top: 1px dashed #334155; padding-top: 8px; }
-        
-        .btn { 
-            display: block; 
-            text-align: center; 
-            padding: 14px; 
-            background: var(--accent-orange); 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            transition: background 0.2s, transform 0.1s; 
+
+        .btn {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            background: var(--accent-orange);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s;
         }
         .btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
         .btn-subtext { display: block; font-size: 11px; font-weight: normal; color: #ffedd5; margin-top: 2px; }
-        
+
         /* Support Box */
-        .support-box { 
-            background: #111827; 
-            border: 2px dashed var(--accent-orange); 
-            border-radius: 14px; 
-            padding: 30px; 
-            margin-top: 50px; 
+        .support-box {
+            background: #111827;
+            border: 2px dashed var(--accent-orange);
+            border-radius: 14px;
+            padding: 30px;
+            margin-top: 50px;
             text-align: center;
         }
         .support-box h3 { margin-top: 0; color: var(--text-main); font-size: 20px; }
-        
+
         .hint { color: var(--text-muted); font-size: 12px; margin-top: 25px; }
+
+        /* ── Cookie-Banner ── */
+        #cookie-banner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border-top: 2px solid var(--accent-orange);
+            padding: 18px 24px;
+            z-index: 9999;
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
+        }
+        #cookie-banner .cookie-inner {
+            max-width: 850px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        #cookie-banner .cookie-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: left;
+            min-width: 240px;
+        }
+        #cookie-banner .cookie-text strong {
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        #cookie-banner .cookie-text a {
+            color: var(--accent-orange);
+            text-decoration: underline;
+        }
+        #cookie-banner .cookie-btns {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        #cookie-banner .btn-accept {
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 7px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #cookie-banner .btn-accept:hover { background: var(--btn-hover); }
+        #cookie-banner .btn-decline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid #475569;
+            padding: 10px 22px;
+            border-radius: 7px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        #cookie-banner .btn-decline:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
     </style>
 </head>
 <body>
+
+<!-- ── Cookie-Banner ── -->
+<div id="cookie-banner">
+    <div class="cookie-inner">
+        <div class="cookie-text">
+            <strong>🍪 Datenschutz-Hinweis / Cookie Notice</strong>
+            Diese Webseite verwendet StatCounter zur anonymen Besucherzählung.
+            StatCounter setzt ein Cookie, wenn Sie zustimmen.
+            Bei Ablehnung wird kein Cookie gesetzt und kein Tracking gestartet. —
+            This website uses StatCounter for anonymous visitor counting.
+            StatCounter sets a cookie only with your consent.
+            If you decline, no cookie is set and no tracking occurs.
+            <a href="datenschutz.html">Datenschutz / Privacy Policy</a>
+        </div>
+        <div class="cookie-btns">
+            <button class="btn-accept" onclick="cookieConsent('accepted')">✓ Zustimmen / Accept</button>
+            <button class="btn-decline" onclick="cookieConsent('declined')">✗ Ablehnen / Decline</button>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <h1><span class="brand-accent">Cockpit</span> Utility Apps</h1>
     <p class="subtitle">
         Kostenlose Tools von Piloten für Piloten und Interessierte <span class="lang-sep">|</span> Free tools made by pilots for pilots and anyone interested.
     </p>
-    
+
     <div class="app-grid">
         <div class="app-card">
             <h2 class="app-title">⛽ Fuel Tank Timer</h2>
             <div class="app-desc">
-                Erinnert Sie daran, während des Fluges rechtzeitig den Kraftstofftank zu wechseln. Verhindert dadurch auch einen ungleichmäßigen Kraftstoffverbrauch. Präzise grafische, akustische und vibrierende Warnsignale. 
+                Erinnert Sie daran, während des Fluges rechtzeitig den Kraftstofftank zu wechseln. Verhindert dadurch auch einen ungleichmäßigen Kraftstoffverbrauch. Präzise grafische, akustische und vibrierende Warnsignale.
                 <span class="en-desc">Reminds you to switch fuel tanks in a timely manner during flight. This also helps prevent uneven fuel consumption. Precise visual, audible, and vibrating warning signals. </span>
             </div>
             <a href="anleitung.html" style="color: var(--accent-orange); display: block; margin-bottom: 15px; font-weight: bold; text-decoration: underline; font-size: 14px;">
@@ -101,23 +191,21 @@
         </div>
 
         <div class="app-card">
-    <h2 class="app-title">📋 Multi-Aircraft Checklist</h2>
-    <div class="app-desc">
-        Digitale, interaktive Checklisten für fünf verschiedene Flugzeugmuster (C150-172, TB-10, TB-20, PA28-161 Cadet, PA28-181 Archer II). Perfekt optimiert für die schnelle und fehlerfreie Abarbeitung aller Flugphasen im Cockpit.
-        <span class="en-desc">Digital, interactive checklists for five different aircraft types (C150-172, TB-10, TB-20, PA28-161 Cadet, PA28-181 Archer II). Perfectly optimized for fast and error-free execution of all flight phases in the cockpit.</span>
-    </div>
-    
-    <a href="anleitung-checklisten-app.html" style="color: var(--accent-orange); display: block; margin-bottom: 15px; font-weight: bold; text-decoration: underline; font-size: 14px;">
-        📖 Installations- & Einrichtungsanleitung anzeigen
-    </a>
-    
-    <a href="FlyCL.apk" class="btn">
-        App kostenlos laden
-        <span class="btn-subtext">Download for free (.APK)</span>
-    </a>
-</div>
-        
-       <div class="app-card">
+            <h2 class="app-title">📋 Multi-Aircraft Checklist</h2>
+            <div class="app-desc">
+                Digitale, interaktive Checklisten für fünf verschiedene Flugzeugmuster (C150-172, TB-10, TB-20, PA28-161 Cadet, PA28-181 Archer II). Perfekt optimiert für die schnelle und fehlerfreie Abarbeitung aller Flugphasen im Cockpit.
+                <span class="en-desc">Digital, interactive checklists for five different aircraft types (C150-172, TB-10, TB-20, PA28-161 Cadet, PA28-181 Archer II). Perfectly optimized for fast and error-free execution of all flight phases in the cockpit.</span>
+            </div>
+            <a href="anleitung-checklisten-app.html" style="color: var(--accent-orange); display: block; margin-bottom: 15px; font-weight: bold; text-decoration: underline; font-size: 14px;">
+                📖 Installations- & Einrichtungsanleitung anzeigen
+            </a>
+            <a href="FlyCL.apk" class="btn">
+                App kostenlos laden
+                <span class="btn-subtext">Download for free (.APK)</span>
+            </a>
+        </div>
+
+        <div class="app-card">
             <h2 class="app-title">✈️ Weight & Balance Calculator</h2>
             <div class="app-desc">
                 Berechnet präzise und in Echtzeit das Abfluggewicht sowie die genaue Schwerpunktlage für sechs verschiedene Flugzeugtypen (PA28-161 Cadet, PA28-181 Archer II, Cessna 150, Cessna 172, TB-10 u. TB-20). Mit flugzeugspezifischem Datenspeicher und passwortgeschützten Leermassen gegen versehentliches Überschreiben im Cockpit.
@@ -131,101 +219,114 @@
                 <span class="btn-subtext">Download for free (.APK)</span>
             </a>
         </div>
-        
+
         <div class="app-card">
             <h2 class="app-title">✈️ FlightLog Invoice & EÜR Manager</h2>
             <div class="app-desc">
-               Schnelle Rechnungserstellung mit einer damit verbundenen Einnahmen-Überschuss-Rechnung für´s Finanzamt mit Statistik-Auswertung, Archiv und CSV-Export. Für freiberufliche Fluglehrer und Freiberufler allgemein. 
+               Schnelle Rechnungserstellung mit einer damit verbundenen Einnahmen-Überschuss-Rechnung für´s Finanzamt mit Statistik-Auswertung, Archiv und CSV-Export. Für freiberufliche Fluglehrer und Freiberufler allgemein.
                 <span class="en-desc">A web app for freelance flight instructors – or freelancers in general – designed for quick invoicing and the generation of a corresponding profit and loss account for the tax authorities, complete with statistical analysis, an archive and CSV export.</span>
             </div>
             <a href="anleitung_flightlog_invoice.html" style="color: var(--accent-orange); display: block; margin-bottom: 15px; font-weight: bold; text-decoration: underline; font-size: 14px;">
                 📖 Installations- & Einrichtungsanleitung anzeigen
-             <!-- BUTTON 1: DIREKT IM BROWSER STARTEN (EMPFOHLEN FÜR MAXIMALE DATENSICHERHEIT) -->
-        <!-- NUR NOCH DER SICHERE DIREKTSTART IM BROWSER -->
-        <a href="FlightLog Invoice u. EÜR Manager.html" class="btn" style="background-color: #EA580C; display: block; text-align: center;">
-            🚀 App direkt im Browser starten
-            <span class="btn-subtext">Run directly in browser (Recommended)</span>
-        </a>
-
-       </div>
-
+            </a>
+            <a href="FlightLog Invoice u. EÜR Manager.html" class="btn" style="background-color: #EA580C;">
+                🚀 App direkt im Browser starten
+                <span class="btn-subtext">Run directly in browser (Recommended)</span>
+            </a>
+        </div>
     </div>
 
-    <!-- Neue Support Box -->
+    <!-- Support Box -->
     <div class="support-box">
         <h3>Unterstütze dieses Hobbyprojekt | Support this project</h3>
         <p style="color: var(--text-main);">
             Diese Apps sind komplett kostenlos, werbefrei und tracken keine Daten. Ich entwickle sie in meiner Freizeit für uns Piloten und Interessierte. Wenn Dir ein Tool gefällt und es Dir im Cockpit hilft, freue ich mich riesig, wenn Du diese Seite bei Deinen Freunden und bekannten Piloten weiterempfiehlst.
         </p>
-<!-- Dieser Button bringt sein eigenes Design mit und lässt andere Boxen in Ruhe -->
-<button id="shareBtn" onclick="copyToClipboard()" style="background-color: #EA580C; color: #ffffff; border: 2px solid #ff7900; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; display: block; margin: 20px auto;">
-  🔗 Link zu dieser Webseite kopieren
-</button>
+        <button id="shareBtn" onclick="copyToClipboard()" style="background-color: #EA580C; color: #ffffff; border: 2px solid #ff7900; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; display: block; margin: 20px auto;">
+            🔗 Link zu dieser Webseite kopieren
+        </button>
     </div>
 
-    <!-- Haftungsausschluss / Disclaimer -->
+    <!-- Haftungsausschluss -->
     <div style="background: #1e293b; border: 1px solid #dc2626; border-radius: 14px; padding: 25px; margin-top: 40px; text-align: left; font-size: 13px;">
         <h4 style="color: #ef4444; margin-top: 0; font-size: 16px; border-bottom: 1px solid #dc2626; padding-bottom: 5px;">
             ⚠️ Wichtiger rechtlicher Hinweis / Important Disclaimer
         </h4>
-        
         <p style="color: #f8fafc; font-weight: bold;">DEUTSCH:</p>
         <p style="color: #cbd5e1; margin-bottom: 15px;">
             Jede hier veröffentlichte Software ist ein reines Hobbyprojekt, wurde aber trotzdem mit größter Sorgfalt entwickelt. Alle Apps sind jedoch <strong>keinesfalls für die primäre Navigation, Flugdurchführung oder als offizielles Instrument im Cockpit zugelassen oder zertifiziert</strong>. Die Nutzung erfolgt ausschließlich auf eigene Gefahr und eigenes Risiko. Der Entwickler übernimmt keinerlei Haftung für direkte oder indirekte Schäden, Fehlberechnungen, Datenverluste oder Zwischenfälle, die durch die Nutzung oder Fehlfunktion dieser Apps entstehen. Die offiziellen Luftfahrthandbücher, Bordmeldungen und freigegebenen Instrumente des Luftfahrzeugs haben stets Vorrang.
         </p>
-        
         <p style="color: #f8fafc; font-weight: bold; border-top: 1px dashed #334155; padding-top: 10px;">ENGLISH:</p>
         <p style="color: #94a3b8; font-style: italic; margin-bottom: 0;">
-            All software published here is purely a hobby project, but has nevertheless been developed with the utmost care. However, none of these apps are in any way approved or certified for primary navigation, flight operations or as an official instrument in the cockpit. Use is entirely at your own risk. The developer accepts no liability whatsoever for any direct or indirect damage, miscalculations, data loss or incidents arising from the use or malfunction of these apps. The aircraft’s official flight manuals, on-board messages and approved instruments always take precedence. 
+            All software published here is purely a hobby project, but has nevertheless been developed with the utmost care. However, none of these apps are in any way approved or certified for primary navigation, flight operations or as an official instrument in the cockpit. Use is entirely at your own risk. The developer accepts no liability whatsoever for any direct or indirect damage, miscalculations, data loss or incidents arising from the use or malfunction of these apps. The aircraft's official flight manuals, on-board messages and approved instruments always take precedence.
         </p>
-
-        <!-- Hinweis für Android Installation -->
         <p class="hint" style="color: #94a3b8; border-top: 1px dashed #334155; margin-top: 20px; padding-top: 10px;">
             Hinweis für Android: Erlaube in den Systemeinstellungen den Download aus "unbekannten Quellen" für deinen Browser.<br>
             Note for Android: Allow installation from "unknown sources" in your browser's security settings.
         </p>
     </div>
 
-    <!-- Fußzeile mit Impressum und Datenschutz -->
-<footer style="margin-top: 30px; padding: 20px 0; border-top: 1px solid #334155; font-size: 14px; text-align: center;">
-    <a href="impressum.html" style="color: var(--text-muted); text-decoration: none; font-weight: bold; margin-right: 20px; transition: color 0.2s;">
-        Impressum / Legal Notice
-    </a>
-    <a href="datenschutz.html" style="color: var(--text-muted); text-decoration: none; font-weight: bold; transition: color 0.2s;">
-        Datenschutz
-    </a>
-</footer>
+    <!-- Footer -->
+    <footer style="margin-top: 30px; padding: 20px 0; border-top: 1px solid #334155; font-size: 14px; text-align: center;">
+        <a href="impressum.html" style="color: var(--text-muted); text-decoration: none; font-weight: bold; margin-right: 20px; transition: color 0.2s;">
+            Impressum / Legal Notice
+        </a>
+        <a href="datenschutz.html" style="color: var(--text-muted); text-decoration: none; font-weight: bold; transition: color 0.2s;">
+            Datenschutz
+        </a>
+    </footer>
 
 </div>
-<!-- Dieser Code sorgt dafür, dass das Kopieren im Hintergrund funktioniert -->
+
 <script>
+/* ── Link kopieren ── */
 function copyToClipboard() {
-  const currentUrl = window.location.href; 
-  navigator.clipboard.writeText(currentUrl).then(() => {
-    const btn = document.getElementById('shareBtn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = "✅ Der Webseiten-Link wurde zum Weitergeben in die Zwischenablage kopiert!";
-    setTimeout(() => {
-      btn.innerHTML = originalText;
-    }, 2000);
-  }).catch(err => {
-    console.error('Fehler: ', err);
-  });
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl).then(() => {
+        const btn = document.getElementById('shareBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ Der Webseiten-Link wurde zum Weitergeben in die Zwischenablage kopiert!";
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+    }).catch(err => { console.error('Fehler: ', err); });
 }
+
+/* ── Cookie-Consent & StatCounter ── */
+
+function loadStatCounter() {
+    var sc   = document.createElement('script');
+    sc.async = true;
+    sc.src   = 'https://www.statcounter.com/counter/counter.js';
+    document.head.appendChild(sc);
+    // Variablen müssen VOR dem Script-Tag gesetzt sein
+    window.sc_project  = 13327407;
+    window.sc_invisible = 1;
+    window.sc_security  = 'e32af4a4';
+}
+
+function cookieConsent(choice) {
+    // Entscheidung in localStorage speichern (kein Cookie bei Ablehnung)
+    localStorage.setItem('cookie_consent', choice);
+    document.getElementById('cookie-banner').style.display = 'none';
+    if (choice === 'accepted') {
+        loadStatCounter();
+    }
+}
+
+function initConsent() {
+    var consent = localStorage.getItem('cookie_consent');
+    if (consent === 'accepted') {
+        loadStatCounter();           // bereits zugestimmt → direkt laden
+    } else if (consent === 'declined') {
+        // Abgelehnt → nichts laden, Banner bleibt versteckt
+    } else {
+        // Noch keine Entscheidung → Banner anzeigen
+        document.getElementById('cookie-banner').style.display = 'block';
+    }
+}
+
+// Beim Laden der Seite prüfen
+initConsent();
 </script>
-<!-- Default Statcounter code for Apps für Piloten Homepage"
-https://www.apps-for-pilots.de -->
-<script type="text/javascript">
-var sc_project=13327407; 
-var sc_invisible=1; 
-var sc_security="e32af4a4"; 
-</script>
-<script type="text/javascript"
-src="https://www.statcounter.com/counter/counter.js" async></script>
-<noscript><div class="statcounter"><a title="Web Analytics"
-href="https://statcounter.com/" target="_blank"><img class="statcounter"
-src="https://c.statcounter.com/13327407/0/e32af4a4/1/" alt="Web Analytics"
-referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-<!-- End of Statcounter Code -->    
+
 </body>
 </html>
