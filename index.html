@@ -62,6 +62,23 @@
         .btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
         .btn-subtext { display: block; font-size: 11px; font-weight: normal; color: #ffedd5; margin-top: 2px; }
 
+        .btn-row { display: flex; gap: 10px; }
+        .btn-row .btn { flex: 1; box-sizing: border-box; }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-orange);
+            color: var(--accent-orange);
+            padding: 12px 14px;
+        }
+        .btn-secondary:hover { background: var(--accent-orange); color: white; }
+        .btn-secondary .btn-subtext { color: var(--accent-orange); opacity: 0.75; }
+        .btn-secondary:hover .btn-subtext { color: #ffedd5; }
+
+        @media (max-width: 480px) {
+            .btn-row { flex-direction: column; }
+        }
+
         /* Support Box */
         .support-box {
             background: #111827;
@@ -199,10 +216,16 @@
             <a href="anleitung-checklisten-app.html" style="color: var(--accent-orange); display: block; margin-bottom: 15px; font-weight: bold; text-decoration: underline; font-size: 14px;">
                 📖 Installations- & Einrichtungsanleitung anzeigen
             </a>
-            <a href="FlyCL.apk" class="btn">
-                App kostenlos laden
-                <span class="btn-subtext">Download for free (.APK)</span>
-            </a>
+            <div class="btn-row">
+                <a href="FlyCL.apk" class="btn">
+                    App kostenlos laden
+                    <span class="btn-subtext">Download for free (.APK)</span>
+                </a>
+                <a href="Checklisten.html" class="btn btn-secondary">
+                    Web-App starten
+                    <span class="btn-subtext">Launch web app</span>
+                </a>
+            </div>
         </div>
 
         <div class="app-card">
@@ -214,10 +237,16 @@
             <a href="anleitung-fly-weight.html" style="color: var(--accent-orange); display: block; margin-bottom: 15px; font-weight: bold; text-decoration: underline; font-size: 14px;">
                 📖 Installations- & Einrichtungsanleitung anzeigen
             </a>
-            <a href="Fly-Weight.apk" class="btn">
-                App kostenlos laden
-                <span class="btn-subtext">Download for free (.APK)</span>
-            </a>
+            <div class="btn-row">
+                <a href="Fly-Weight.apk" class="btn">
+                    App kostenlos laden
+                    <span class="btn-subtext">Download for free (.APK)</span>
+                </a>
+                <a href="Fly-Weight.html" class="btn btn-secondary">
+                    Web-App starten
+                    <span class="btn-subtext">Launch web app</span>
+                </a>
+            </div>
         </div>
 
         </div>
