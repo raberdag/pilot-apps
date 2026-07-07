@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flugzeug Checklisten Master-App</title>
+    <style>
+        body {
+            margin: 0;
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background: #111827;
+            padding: 16px;
+            padding-top: calc(16px + env(safe-area-inset-top, 20px));
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid #1e293b;
+        }
+        .container {
+            padding: 15px;
+            padding-bottom: 90px;
+        }
+        h2 {
+            font-size: 1.3rem;
+            color: #f8fafc;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        /* Haupt- und Untermenü-Karten */
+        .card {
+            background: #1e293b;
+            padding: 20px 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            transition: background 0.2s, transform 0.1s, border-color 0.2s;
+        }
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        /* Normalcheckliste blau */
+        .card-normal {
+            background: #1e3a8a !important;
+            border: 1px solid #3b82f6 !important;
+        }
+        .card-normal:active {
+            background: #1d4ed8 !important;
+        }
+
+        /* Notcheckliste rot */
+        .card-emergency {
+            background: #7f1d1d !important;
+            border: 1px solid #dc2626 !important;
+        }
+        .card-emergency:active {
+            background: #b91c1c !important;
+        }
+
+        .title-normal {
+            color: #93c5fd !important;
+        }
+        .title-emergency {
+            color: #fca5a5 !important;
+        }
+
+        /* Header innerhalb von Listen */
+        .section-title {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+	    color: yellow; /* Macht alle Überschriften im Cockpit schön gelb */
+        }
+
+        #copyright-footer {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px;
+            line-height: 1.4;
+            border-top: 1px solid #1e293b;
+        }
+
+        /* Listeneinträge */
+        .item {
+            background: #1f2937;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            transition: opacity 0.2s, border-color 0.2s;
+            word-break: break-word;
+            border: 1px solid #374151;
+        }
+
+        .item.mode-normal {
+            border-left: 5px solid #3b82f6;
+        }
+        .item.mode-emergency {
+            border-left: 5px solid #dc2626;
+        }
+
+        .item.done {
+            opacity: 0.15;
+        }
+        .item-left {
+            font-weight: bold;
+            text-align: left;
+            flex: 1;
+            padding-right: 10px;
+            min-width: 55%;
+        }
+        .item-right {
+            color: #38bdf8;
+            text-align: right;
+            font-weight: bold;
+            word-break: keep-all;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #111827;
+            padding: 12px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            border-top: 1px solid #1e293b;
+            display: flex;
+            gap: 10px;
+            z-index: 9999;
+        }
+        button {
+            flex: 1;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:active {
+            background: #2563eb;
+        }
+        .item.mode-emergency .item-right {
+            color: #fdba74;
+        }
+
+        /* Kommentar/Anweisung unter dem Linken Text */
+        .comment {
+            display: block;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 4px;
+            font-style: italic;
+            text-align: left;
+        }
+
+        /* Feste Fußzeile */
+        .bottom {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            gap: 8px;
+            background: #111827;
+            padding: 10px;
+            box-sizing: border-box;
+            border-top: 1px solid #1e293b;
+            z-index: 2000;
+        }
+        .bottom button {
+            flex: 1;
+            padding: 14px 8px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .home { background: #2563eb; }
+        .menu { background: #059669; }
+        .reset { background: #dc2626; }
+    </style>
+</head>
+<body>
+
+<header>Flugzeug Checklisten</header>
+
+<div class="container" id="app"></div>
+
+<div class="bottom">
+    <button class="home" onclick="home()">Flugzeuge</button>
+    <button class="menu" onclick="backMenu()">Menü</button>
+    <button class="reset" onclick="resetAll()">Reset</button>
+</div>
+
+<div id="resetModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: #1e293b; border: 1px solid #334155; padding: 25px 20px; border-radius: 12px; width: 85%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <h3 style="margin-top: 0; color: #f8fafc; font-size: 1.2rem; margin-bottom: 15px;">Checkliste zurücksetzen?</h3>
+        <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.4;">Möchtest du wirklich alle abgehakten Punkte löschen?</p>
+        <div style="display: flex; gap: 12px;">
+            <button onclick="closeResetModal(false)" style="flex: 1; background: #334155; color: #f8fafc; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Abbrechen</button>
+            <button onclick="closeResetModal(true)" style="flex: 1; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Ja, Reset</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const checklistData = {
+        "Cessna 150-172": {
+            "Normalcheckliste": {
+                "1. Äußere Sichtprüfung": [
+                    "Gabel – entfernen", "Kraftstoff-Vorrat – prüfen", "Kraftstoffsystem – entwässern",
+                    "Ruderverriegelung – entfernen", "Zündmagnetschalter – aus", "Hauptschalter – ein",
+                    "Klappen – ausfahren", "Zusammenstoßwarnlicht – prüfen", "Hauptschalter – aus",
+                    "Öffnung für stat. Druckentnahme – frei", "Bugrad und Federbein – prüfen",
+                    "Landescheinwerfer – prüfen", "Vergaserluftfilter – frei", "Propeller und Haube – prüfen",
+                    "Ölstand – prüfen", "Knopf des Kraftstoffsiebes – ziehen", "Hauptfahrwerk und Bremse – prüfen",
+                    "Rutschmarke – beachten", "Frischlufteinlass – frei", "Navigationslicht – prüfen",
+                    "Anschlüsse für Querruder – prüfen", "Landeklappen – prüfen", "Seiten- und Höhenruder – prüfen",
+                    "Fahrwerk und Fläche – siehe 17–22", "Staurohr – frei", "Überziehmelder (saugen) – prüfen",
+                    "Tanklüftung – frei"
+                ],
+                "2. Vor dem Anlassen": [
+                    "Bordbuch-Eintrag – prüfen", "Dokumente – prüfen", "Sitze und Gurte – anpassen und verriegeln",
+                    "Türen – schließen und verriegeln (C172)", "<span class='comment'>(nicht den Gurt oder Kleidungsstück einklemmen!)</span>"
+                ],
+                "3. Anlassen": [
+                    "Brandhahn – auf", "Gemischregler – reich", "Vergaservorwärmung – kalt",
+                    "Zusammenstoßwarnlicht – ein", "Alle elektrischen Geräte – aus", "Hauptschalter – ein",
+                    "Kraftstoff – einspritzen", "Gashebel – 1cm öffnen", "Propellerbereich – frei",
+                    "Zündschalter – ein", "Öldruck – prüfen", "Funkgerät – ein", "Sicherungen – prüfen"
+                ],
+                "4. Vor dem Start": [
+                    "Kabinentüren – verriegelt", "Gas für – 1700 U/min", "Triebwerksüberw.-Instr. – grüner Bereich",
+                    "Amperemeter – prüfen", "Zündmagnete – prüfen", "<span class='comment'>Der Drehzahlabfall darf nicht mehr als 150 U/min sein, der Drehzahlunterschied zwischen beiden Magneten nicht mehr als 75 U/min.</span>",
+                    "Vergaservorwärmung – prüfen", "Unterdruck – 4,6–5,4 in hg", "Gashebel – 1000 U/min",
+                    "Höhenmesser – einstellen", "Kreiselkompass – einstellen", "Höhenrudertrimmung – „Take off“",
+                    "Flügelklappen – 0°", "Höhen-, Quer- und Seitenruder – prüfen (freie und richtige Bewegung)"
+                ],
+                "5. Start / Steigflug / Reiseflug": [
+                    "[HEADER] START", "Landeklappen – 0°–10°", "Vergaservorwärmung – kalt", "Nochmals alle Instrumente – überprüfen",
+                    "Gashebel – zügig auf Vollgas", "Richtung (etwas rechts Seitenruder) – einhalten", "Bei 50 KT Bugrad abheben",
+                    "[HEADER] STEIGGESCHWINDIGKEIT", "– 60–70 KT (C150)", "– 65–75 KT (C152)", "– 70–80 KT (C172)",
+                    "Bei 400 ft GND – Klappen einfahren", "[HEADER] STEIGFLUG", "Fluggeschwindigkeit", "– 65–70 KT (C150)",
+                    "– 70–80 KT (C152/172)", "Vollgas!", "Gemischregler – reich (sofern TW nicht rauh läuft)",
+                    "[HEADER] REISEFLUG", "Leistung – &lt; 75% nach Tabelle", "Höhenrudertrimmung – anpassen", "Gemischregler – einstellen"
+                ],
+                "6. Vor der Landung / Durchstarten": [
+                    "[HEADER] VOR DER LANDUNG", "Gemischregler – reich", "Vergaservorwärmung – warm", "Flügelklappen nach Bedarf – &lt; 85 KT",
+                    "Fluggeschwindigkeit Klappe 0° – 60–70 KT", "Fluggeschwindigkeit Klappe max. – 50–60 KT (C150)", "Fluggeschwindigkeit Klappe max. – 55–65 KT (C152/172)", "[HEADER] DURCHSTARTEN", "Gashebel – Vollgas", "Vergaservorwärmung – kalt",
+                    "Fluggeschwindigkeit beachten – &gt; 55 KT", "Landeklappen langsam – einfahren", "Erneut anfliegen"
+                ],
+                "7. Nach der Landung / Abstellen": [
+                    "Landeklappen – einfahren", "Vergaservorwärmung – kalt", "Gas – 1000 U/min", "Funkgerät – aus",
+                    "Gemischregler – ganz herausziehen", "Zündschalter – aus", "Hauptschalter – aus",
+                    "Parkbremse – fest (bei Bedarf)", "Ruderverriegelung – anbringen (wenn erforderlich)",
+                    "Bordbuch – ausfüllen", "Besondere Vorkommnisse – melden"
+                ]
+            },
+            "Not-Checkliste": {
+                "1. Triebwerksstörung während des Fluges": [
+                    "Überprüfe!", "Brandhahn – auf", "Gemischregler – reich", "Vergaservorwärmung – ein",
+                    "Zündschalter – auf beide", "Wiederstart versuchen!", "Gashebel mind. 1 cm geöffnet <span class='comment'>Wenn der Propeller bereits steht, mit dem Anlasser Motor durchdrehen.</span>",
+                    "Wenn Wiederstart keinen Erfolg hat:", "Gemischregler – ganz herausziehen", "Gashebel – Leerlauf",
+                    "Zündschalter – aus", "Brandhahn – zu", "Notmeldung – absetzen",
+                    "Hauptschalter einlassen, damit Landeklappen ausgefahren werden können.", "Notlanden!"
+                ],
+                "2. Kabinen-, Flügel-, Kabelbrand": [
+                    "[HEADER] KABINENBRAND", "Hauptschalter – aus", "Kabinenheizung/-lüftung – schließen",
+                    "Handfeuerlöscher verwenden. Falls das Feuer nicht gelöscht werden kann, so bald wie möglich landen. Bei Benutzung des Feuerlöschers ist Belüftung der Kabine anzuraten.",
+                    "[HEADER] FLÜGELBRAND", "Hauptschalter – aus", "Belüftung – schließen",
+                    "Slippen, um die Flammen von Kraftstofftank und der Kabine fernzuhalten, so bald wie möglich ohne Klappen landen.",
+                    "[HEADER] KABELBRAND", "Hauptschalter – aus", "Alle Schalter mit Ausnahme des Zündschalters – aus",
+                    "Kabinenheizung/-lüftung – schließen", "Sicherungen und Schutzschalter – prüfen <span class='comment'>Wenn möglich den schadhaften Stromkreis feststellen und nicht mehr einschalten.</span>",
+                    "Hauptschalter – ein", "Die Schalter nacheinander wieder einschalten, dabei versuchen, den schadhaften Stromkreis zu ermitteln.",
+                    "Sich überzeugen, dass der Brand vollkommen gelöscht ist."
+                ],
+                "3. Triebwerksbrand": [
+                    "Brandhahn – zu", "Gashebel – Vollgas", "Wenn Motor steht – Zündschalter aus",
+                    "Gemischregler – ganz herausziehen", "Kabinenheizung/-lüftung – schließen", "Notmeldung – absetzen",
+                    "Alle Schalter – aus", "Notlandung – einleiten", "Vor der Notlandung Hauptschalter einschalten, damit Klappen ausgefahren werden können.",
+                    "Hauptschalter – aus", "Türen – entriegeln"
+                ],
+                "4. Notlandung mit Motorleistung": [
+                    "Geeignetes Gelände – auswählen", "Dieses Gelände mit 20° Klappenstellung and 60 KT überfliegen und prüfen ob es geeignet ist.",
+                    "Eine „Platzrunde Gang Gang“ – einteilen", "Notmeldung – absetzen", "Im Gegenanflug alle Schalter mit Ausnahme des Zünd- und Hauptschalters – aus",
+                    "Im Endanflug 55-60 KT and 40° Klappen", "Kabinentüren – entriegeln", "Kurz vor dem Aufsetzen Zünd- und Hauptschalter – aus"
+                ],
+                "5. Notlandung ohne Motorleistung": [
+                    "Windrichtung – beachten", "Geeignetes Feld – auswählen", "„Platzrunde Hall Bars Bars“ – einteilen", "Brandhahn – zu",
+                    "Gemischregler – ganz herausziehen", "Gashebel – Leerlauf", "Zündschalter – aus",
+                    "Alle Schalter mit Ausnahme des Hauptschalters – aus", "Notmeldung – absetzen", "Im „Endteil“ Türen – entriegeln",
+                    "Kurz vor dem Aufsetzen Klappen auf 40° and Hauptschalter aus"
+                ],
+                "6. Triebwerksstörung nach dem Start": [
+                    "Nachdrücken!!!", "Fluggeschwindigkeit – 60-65 KT", "Gemischregler – ganz herausziehen",
+                    "Brandhahn – zu", "Zündschalter – aus", "Klappen – wie erforderlich", "Hauptschalter – aus"
+                ],
+                "7. Triebwerksstörung beim Start": [
+                    "Gashebel – Leerlauf", "Bremsen – betätigen", "Klappen – einfahren", "Gemischregler – ganz herausziehen",
+                    "Zündschalter – aus", "Hauptschalter – aus"
+                ]
+            }
+        },
+        "TB-10": {
+            "Normalcheckliste": {
+                "1 - VORFLUGKONTROLLEN (Kabine bis Hauptfahrwerk links)": [
+                    "Pilotentür – OFFEN", "Ruderfeststellung – ENTFERNT", "Zündschalter – AUS", "Gemisch – GANZ ARM (Schnellstopp)",
+                    "Hauptschalter – EIN", "Landeklappen – LANDE-STELLUNG", "Höhenrudertrimmung – START-STELLUNG",
+                    "Feuerlöscher (falls eingebaut) – Vorratsdruck prüfen", "Hauptschalter – AUS",
+                    "Tankwahlschalter – OFFEN (LINKS)",
+                    "Linke Tragflügelhinterkante: Landeklappe und Querruder – Prüfen",
+                    "Linker Flügel: Flügelspitze, Lichter und Scheinwerfer – Unbeschädigt",
+                    "Linke Flügelvorderkante: Flügel – Frei von Reif, Schnee, Eis", "Pitotrohr – Pitotrohrschutz entfernt, sauber, nicht verstopft",
+                    "Verankerung – LÖSEN", "Überziehwarnwimpel – Sauber, Ausschlag prüfen", "Kraftstofftank – Vorrat prüfen",
+                    "Tankverschluß – VERRIEGELT", "Tankreinigungsventil – Prüfen ob kein Wasser und kein Schmutz im Kraftstoff sind",
+                    "Schnellablaßventil – Prüfen ob GESCHLOSSEN",
+                    "Linkes Hauptfahrwerk: Unterlegkeile – ENTFERNEN", "Reifen – Zustand prüfen", "Federbein – Normalstellung",
+                    "Radverkleidung – Guter Zustand, Sauberkeit und normale Stellung prüfen"
+                ],
+                "2 - VORFLUGKONTROLLEN (Rumpfvorderteil bis Rumpfhinterteil links)": [
+                    "Rumpfvorderteil: Windschutzscheibe und Fenster – Sauber", "Befestigung der Triebwerkskleidung – Prüfen",
+                    "Öl – Ölstand and Dichtigkeit des Tanks prüfen", "Propeller – Sauber, keine Beschädigung", "Spinner – Prüfen (kein Spiel)",
+                    "Lufteintritte – Sauber", "Ölkühlerlufteinlaß – Nicht verstopft", "Auspuffrohr – Prüfen",
+                    "Filterreinigung – Prüfen ob kein Wasser and kein Schmutz im Kraftstoff sind", "Schnellablaßventil – Prüfen ob GESCHLOSSEN",
+                    "Bugfahrwerk: Zugstange – ENTFERNEN", "Reifen – Prüfen", "Federbein – Normalstellung",
+                    "Radverkleidung – Guter Zustand, Sauberkeit and normale Stellung prüfen",
+                    "Rechtes Hauptfahrwerk: Unterlegkeile – ENTFERNEN", "Reifen – Zustand prüfen", "Federbein – Normalstellung",
+                    "Radverkleidung – Guter Zustand, Sauberkeit und normale Stellung prüfen",
+                    "Rechte Flügelvorderkante: Tankreinigungsventil – Prüfen ob kein Wasser und kein Schmutz im Kraftstoff sind",
+                    "Schnellablaßventil – Prüfen ob GESCHLOSSEN", "Kraftstofftank – Vorrat prüfen", "Tankverschluß – VERRIEGELT",
+                    "Verankerung – LÖSEN", "Flügel – Frei von Reif, Schnee, Eis",
+                    "Rechter Flügel: Flügelspitze und Lichter – Unbeschädigt",
+                    "Rechte Tragflügelhinterkante: Landeklappe und Querruder – Prüfen",
+                    "Rumpfhinterteil, rechts: Schloß der rechten Tür – UNVERRIEGELT", "Statische Druckentnahme – Stopfen entfernt, sauber",
+                    "Glasscheiben – Sauber", "Leitwerke: Seitenleitwerk – Prüfen", "Seitenruder – Prüfen",
+                    "Höhenruder und Trimmklappe – Prüfen",
+                    "Heckkonus and Positionsleuchte – Unbeschädigt",
+                    "Rumpfhinterteil links: Statische Druckentnahme – Stopfen entfernt, sauber", "Gepäckraumtür – VERRIEGELT", "Glasscheiben – Sauber"
+                ],
+                "3 - ELEKTRISCHE ANLAGE": [
+                    "Kabine: Gleichrichtergeneratorschalter – AUS", "Kraftstoffpumpe – AUS", "Hauptschalter – EIN",
+                    "Warn- und Anzeigeleuchten – Geprüft", "Kraftstoffvorrats-Anzeiger – Prüfen", "Landeklappen – EINFAHREN",
+                    "Instrumentenbeleuchtung – EIN", "Positionsleuchten – EIN", "Antikollisionsleuchte (falls eingebaut) – EIN",
+                    "Blitzleuchten (falls eingebaut) – EIN", "Heizbares Pitotrohr (falls eingebaut) – EIN", "Scheinwerfer – EIN",
+                    "Linker Flügel: Positionsleuchte – Brennt", "Blitzantikollisionsleuchte (falls eingebaut) – Blinkt", "Scheinwerfer – EIN",
+                    "Heizbares Pitotrohr (falls eingebaut) – Temperatur prüfen", "Überziehwarnung – Akustisches Signal", "<span class='comment'>(ANMERKUNG: Vor der Fortführung der Kontrolle Scheinwerfer und Pitotrohr auf \"AUS\" um die Batterie nicht zu entladen.)</span>",
+                    "Rechter Flügel: Positionsleuchte – Brennt", "Blitzantikollisionsleuchte (falls eingebaut) – Blinkt",
+                    "Flugzeugheck: Positionsleuchte – Brennt", "Blitzleuchte (falls eingebaut) – Blinkt", "Antikollisionsleuchte (falls eingebaut) – Blinkt",
+                    "Kabine: Positionsleuchte – AUS", "Blitzleuchten (falls eingebaut) – AUS", "Antikollisionsleuchte (falls eingebaut) – AUS",
+                    "Heizbares Pitotrohr (falls eingebaut) – AUS", "Scheinwerfer – AUS", "Instrumentenbeleuchtung – AUS", "Hauptschalter – AUS"
+                ],
+                "4 - VOR DEM ANLASSEN DES TRIEBWERKS": [
+                    "Vorflugkontrolle – Durchgeführt", "Türen – GESCHLOSSEN <span style='color: yellow;'>(vergewissern, dass die Haken eingerastet sind)</span>",
+                    "Hauptschalter – AUS", "Parkbremse – Angezogen", "Sitze – EINGESTELLT UND VERRIEGELT",
+                    "Anschnallgurte, Schultergurte – ANGELEGT UND GESTRAFFT", "Steuerung – Freigängigkeit and Ausschläge prüfen",
+                    "Höhenrudertrimmung – Ausschlag prüfen", "Tankwahlschalter – OFFEN (Links oder rechts)", "Schutzschalter (seitliches Brett) – Gedrückt",
+                    "Zündschalter – AUS", "\"Radio master\" (falls eingebaut) – AUS"
+                ],
+                "5 - ANLASSEN DES TRIEBWERKS": [
+                    "Vergaservorwärmung – VOLL AUF \"KALT\"", "Propeller – GANZ AUF \"KLEINE STEIGUNG\"", "Gemisch – VOLL AUF \"REICH\"",
+                    "Hauptschalter – EIN", "Kraftstoffpumpe – EIN", "Pumpewarnlampe – BRENNT", "Kraftstoffdruck – Im grünen Bereich",
+                    "Einspritzung – Einige Bewegungen auf dem Gashebel", "Gas – ¼ OFFEN", "Flugzeugbereich – Frei",
+                    "Zünd- / Anlaßschalter – ANLASSEN (max. 30 Sek.)", "Sobald das Triebwerk anspringt :", "Zündschalter – BEIDE",
+                    "Öldruck – Im grünen Bereich", "Triebwerk – 1000 bis 1200 U/Min während dem Warmlaufen", "Kraftstoffpumpe – AUS",
+                    "<span class='comment'>BEI WARMEM TRIEBWERK: Das Verfahren ist dasselbe wie unter \"Normales Betriebsverfahren\" beschrieben, jedoch ohne Einspritzung)</span>"
+                ],
+                "6 - NACH DEM ANLASSEN DES TRIEBWERKS": [
+                    "[HEADER] PRÜFUNG DER STROMERZEUGUNG :", "Gleichrichtergeneratorschalter auf \"AUS\"", "Generatorwarnlampe – BRENNT",
+                    "Voltmeter – Im gelben Bereich", "Gleichrichtergeneratorschalter auf \"EIN\"", "Generatorwarnlampe – AUS",
+                    "Voltmeter – Im grünen Bereich", "Wendezeiger (falls eingebaut) – EIN", "Unterduckanzeiger (falls eingebaut) – Geprüft",
+                    "Antikollisionsleuchte (falls eingebaut) – EIN", "Test der Pannenwarntafel – Positiv", "\"Radio master\" (falls eingebaut) – EIN",
+                    "Alle Funk- und Navigationsgeräte – EIN", "Tankwahlschalter – Auf vollsten Tank schalten", "Landeklappen – Geprüft und EINGEFAHREN"
+                ],
+                "7 - ROLLEN": [
+                    "Parkbremse – Gelöst", "Bremsen – Geprüft", "Flugüberwachungsinstrumente – Geprüft",
+                    "Kreiselinstrumente (Künstlicher Horizont, Kurskreisel und Wendezeiger) – Funktion prüfen"
+                ],
+                "8 - PROBELAUF": [
+                    "Parkbremse – Angezogen", "Reibsperre der Triebwerkshebel – Eingestellt", "Öltemperatur – Im grünen Bereich",
+                    "Öldruck – Im grünen Bereich", "Gemisch – VOLL AUF \"REICH\"", "Tankwahlschalter – Auf vollsten Tank schalten",
+                    "[HEADER] PRÜFUNG DER ZÜNDMAGNETE :", "Gas – 2000 U/Min", "Zündschalter – L. dann BEIDE, R. dann BEIDE", "<span class='comment'>(Höchstzulässiger Drehzahlabfall: Für jeden Magneten 175 U/Min. Höchstzulässige Drehzahldifferenz zwischen den Magneten: 50 U/Min.)</span>",
+                    "[HEADER] PRÜFUNG DER VERGASERVORWÄRMUNG :", "Vergaservorwärmung – GEZOGEN (Drehzahlabfall beachten)", "Vergaservorwärmung – GEDRÜCKT",
+                    "[HEADER] PRÜFUNG DES UNTERDRUCKS :", "Unterdruckanzeiger – Im grünen Bereich (4,3 bis 5,2 in. Hg)",
+                    "[HEADER] PRÜFUNG DER STROMERZEUGUNG :", "Voltmeter – Im grünen Bereich", "Gas – Leerlaufdrehzal prüfen (600 bis 700 U/Min)", "Gas – 1000 U/Min"
+                ],
+                "9 - VOR DEM START": [
+                    "Sitze, Anschnallgurte, Schultergurte – Prüfen", "Türen – VERRIEGELT", "Steuerungen – Freigängig",
+                    "Höhenrudertrimmung – START-STELLUNG", "Landeklappen – START-STELLUNG (10°)", "Zündschalter – BEIDE",
+                    "Vergaservorwärmung – VOLL AUF \"KALT\"", "Gemisch – VOLL AUF \"REICH\"", "Tankwahlschalter – Auf vollsten Tank schalten",
+                    "Kraftstoffpumpe – EIN", "Öltemperatur – Im grünen Bereich", "Öldruck – Im grünen Bereich",
+                    "Höhenmesser – Eingestellt", "Kurskreisel – Eingestellt", "Horizont – Eingestellt",
+                    "Parkbremse – GELÖST - Leuchte AUS", "Transponder – EIN (7000)"
+                ],
+                "10 - START / STEIGFLUG / REISEFLUG": [
+                    "[HEADER] START", "Flugzeug ausrichten – Kurskreisel u. Kompaß prüfen", "Gas – Zunehmend Vollgas geben",
+                    "Triebwerksparameter – Prüfen", "Geschwindigkeiten – Prüfen", "Abheben bei – 60 kt",
+                    "Anfänglicher Steigflug – 65 kt", "In 300 ft Höhe : Landeklappen – EINFAHREN",
+                    "In 1000 ft Höhe : Kraftstoffpumpe – AUS", "[HEADER] STEIGFLUG", "Beste Steiggeschwindigkeit – 76 kt", "Ladedruck – 24", "Drehzahl – 2400 U/Min",
+                    "[HEADER] REISEFLUG", "Leistung – entsprechend einstellen", "Trimmklappe – einstellen",
+                    "Gemisch – einstellen (Leanen)", "Tankwahlschalter – Regelmäßig umschalten"
+                ],
+                "11 - ANFLUG / LANDUNG": [
+                    "[HEADER] ANFLUG", "Sitze, Gurte – fest", "Vergaservorwärmung – warm (falls erforderlich)",
+                    "Gemisch – REICH", "Tankwahlschalter – Auf vollsten Tank", "Kraftstoffpumpe – EIN",
+                    "[HEADER] ENDANFLUG", "Geschwindigkeit – 70 kt", "Landeklappen – START-STELLUNG (10°)",
+                    "Landeklappen – LANDE-STELLUNG (40°)", "Anfluggeschwindigkeit – 5 kt",
+                    "[HEADER] DURCHSTARTEN", "Gas – VOLLGAS", "Vergaservorwärmung – KALT",
+                    "Geschwindigkeit – 65 kt", "Landeklappen – 10°", "Sicherer Steigflug – Klappen ganz einfahren"
+                ],
+                "12 - NACH DER LANDUNG / ABSTELLEN": [
+                    "Kraftstoffpumpe – AUS", "Landeklappen – EINFAHREN", "Vergaservorwärmung – KALT",
+                    "Funkgeräte / Avionik – AUS", "Gas – Leerlauf", "Gemisch – GANZ ARM (Schnellstopp)",
+                    "Zündschalter – AUS", "Hauptschalter – AUS", "Sicherung – anbringen"
+                ]
+            },
+            "Not-Checkliste": {
+                "1. Triebwerksstörung während des Fluges": [
+                    "Kraftstoffpumpe - EIN", "Tankwahlschalter - ANDERER TANK", "Brandhahn – auf", "Gemischregler – reich", "Vergaservorwärmung – ein",
+                    "Zündschalter – auf beide", "Wiederstart versuchen!", "Gashebel mind. 1 cm geöffnet <span class='comment'>Wenn der Propeller bereits steht, mit dem Anlasser Motor durchdrehen.</span>",
+                    "Wenn Wiederstart keinen Erfolg hat:", "Gemischregler – ganz herausziehen", "Gashebel – Leerlauf",
+                    "Zündschalter – aus", "Brandhahn – zu", "Notmeldung – absetzen",
+                    "Hauptschalter anlassen, damit Landeklappen ausgefahren werden können.", "Notlanden!"
+                ],
+                "2. Kabinen-, Flügel-, Kabelbrand": [
+                    "[HEADER] KABINENBRAND", "Hauptschalter – aus", "Kabinenheizung/-lüftung – schließen",
+                    "Handfeuerlöscher verwenden. Falls das Feuer nicht gelöscht werden kann, so bald wie möglich landen. Bei Benutzung des Feuerlöschers ist Belüftung der Kabine anzuraten.",
+                    "[HEADER] FLÜGELBRAND", "Hauptschalter – aus", "Belüftung – schließen",
+                    "Slippen, um die Flammen von Kraftstofftank und der Kabine fernzuhalten, so bald wie möglich ohne Klappen landen.",
+                    "[HEADER] KABELBRAND", "Hauptschalter – aus", "Alle Schalter mit Ausnahme des Zündschalters – aus",
+                    "Kabinenheizung/-lüftung – schließen", "Sicherungen und Schutzschalter – prüfen", "<span class='comment'>Wenn möglich den schadhaften Stromkreis feststellen und nicht mehr einschalten.</span>",
+                    "Hauptschalter – ein", "Die Schalter nacheinander wieder einschalten, dabei versuchen, den schadhaften Stromkreis zu ermitteln.",
+                    "Sich überzeugen, dass der Brand vollkommen gelöscht ist."
+                ],
+                "3. Triebwerksbrand": [
+                    "Brandhahn – zu", "Gashebel – Vollgas", "Wenn Motor steht – Zündschalter aus",
+                    "Gemischregler – ganz herausziehen", "Kabinenheizung/-lüftung – schließen", "Notmeldung – absetzen",
+                    "Alle Schalter – aus", "Notlandung – einleiten", "Vor der Notlandung Hauptschalter einschalten, damit Klappen ausgefahren werden können.",
+                    "Hauptschalter – aus", "Türen – entriegeln"
+                ],
+                "4. Notlandung mit Motorleistung": [
+                    "Geeignetes Gelände – auswählen", "Dieses Gelände mit 20° Klappenstellung and 60 KT überfliegen und prüfen ob es geeignet ist.",
+                    "Eine „Platzrunde Gang Bars“ – einteilen", "Notmeldung – absetzen", "Im Gegenanflug alle Schalter mit Ausnahme des Zünd- und Hauptschalters – aus",
+                    "Im Endanflug 55-60 KT and 40° Klappen", "Kabinentüren – entriegeln", "Kurz vor dem Aufsetzen Zünd- und Hauptschalter – aus"
+                ],
+                "5. Notlandung ohne Motorleistung": [
+                    "Windrichtung – beachten", "Geeignetes Feld – auswählen", "„Platzrunde Hall Bars“ – einteilen", "Brandhahn – zu",
+                    "Gemischregler – ganz herausziehen", "Gashebel – Leerlauf", "Zündschalter – aus",
+                    "Alle Schalter mit Ausnahme des Hauptschalters – aus", "Notmeldung – absetzen", "Im „Endteil“ Türen – entriegeln",
+                    "Kurz vor dem Aufsetzen Klappen auf 40° and Hauptschalter aus"
+                ],
+                "6. Triebwerksstörung nach dem Start": [
+                    "Nachdrücken!!!", "Fluggeschwindigkeit – 60-65 KT", "Gemischregler – ganz herausziehen",
+                    "Brandhahn – zu", "Zündschalter – aus", "Klappen – wie erforderlich", "Hauptschalter – aus"
+                ],
+                "7. Triebwerksstörung beim Start": [
+                    "Gashebel – Leerlauf", "Bremsen – betätigen", "Klappen – einfahren", "Gemischregler – ganz herausziehen",
+                    "Zündschalter – aus", "Hauptschalter – aus"
+                ]
+            }
+        },
+        "TB-20": {
+            "Normalcheckliste": {
+                "1. Vorflugkontrolle": [
+                    "[HEADER] 1. Kabine",
+                    "Pilotentür – OFFEN", "Ruderfeststellung – ENTFERNT", "Zündschalter – AUS", "Fahrwerkbetätigung – AUSGEFAHREN", "Gemisch – GANZ ARM (Schnellstopp)", "Hauptschalter – EIN", "Landeklappen – LANDE-STELLUNG", "Höhenrudertrimmung – -START-STELLUNG", "Seitenrudertrimmung – START-STELLUNG", "Sauerstoff (falls eingebaut) – Vorratsdruck prüfen", "Feuerlöscher (falls eingebaut) – Vorratsdruck prüfen", "Hauptschalter – AUS", "Tankwahlschalter – OFFEN auf \"Links\"",
+                    "[HEADER] 2. Linke Tragflügelhinterkante",
+                    "Landeklappe und Querruder – PRÜFEN",
+                    "[HEADER] 3. Linke Flügel",
+                    "Flügelspitze, Lichter und Scheinwerfer – Unbeschädigt",
+                    "[HEADER] 4. Linke Flügelvorderkante",
+                    "Flügel – Frei von Reif, Schnee, Eis", "Pitotrohr – Pitotrohrschutz entfernt, sauber, nicht verstopft", "Verankerung – LÖSEN", "Überziehwarnwimpel – Sauber, Ausschlag prüfen", "Kraftstofftank – Vorrat prüfen", "Tankverschluss – VERRIEGELT", "Tankreinigungsventil – Prüfen ob kein Wasser oder Schmutz im Kraftstoff ist", "Schnellablassventil – Prüfen ob GESCHLOSSEN",
+                    "[HEADER] 5. Linkes Hauptfahrwerk",
+                    "Unterlegkeile – ENTFERNEN", "Reifen – Zustand prüfen", "Federbein – Normalstellung", "Abdeckklappe – Spiel und Sauberkeit prüfen", "Mikroschalter – Sauber", "Fahrwerkschacht – Keine Fremdkörper",
+                    "[HEADER] 6. Rumpfvorderteil",
+                    "Windschutzscheibe und Fenster – Sauber", "Befestigung der Triebwerkverkleidung – Prüfen", "Öl – Ölstand und Dichtigkeit der Ölwanne prüfen", "Propeller – Sauber, keine Beschädigung", "Spinner – Prüfen (kein Spiel)", "Lufteintritte – Frei", "Ölkühlerlufteinlass – Frei", "Auspuffrohr – Prüfen", "Filterreinigung – Prüfen ob kein Wasser oder Schmutz im Kraftstoff ist", "Schnellablassventil – Prüfen ob GESCHLOSSEN",
+                    "[HEADER] 7. Bugfahrwerk",
+                    "Zugstange – ENTFERNEN", "Reifen – Prüfen", "Federbein – Normalstellung", "Abdeckklappe – Befestigungen und Sauberkeit prüfen", "Mikroschalter – Sauber", "Fahrwerkschacht – Keine Fremdkörper",
+                    "[HEADER] 8. Rechtes Hauptfahrwerk",
+                    "Unterlegkeile – ENTFERNEN", "Reifen – Zustand prüfen", "Federbein – Normalstellung", "Abdeckklappe – Spiel und Sauberkeit prüfen", "Mikroschalter – Sauber", "Fahrwerkschacht – Keine Fremdkörper",
+                    "[HEADER] 9. Rechte Flügelvorderkante",
+                    "Tankreinigung – Prüfen ob kein Wasser oder Schmutz im Kraftstoff ist", "Schnellablassventil – Prüfen ob GESCHLOSSEN", "Kraftstofftank – Vorrat prüfen", "Tankverschluss – VERRIEGELT", "Verankerung – LÖSEN", "Flügel – Frei von Reif, Schnee, Eis",
+                    "[HEADER] 10. Rechter Flügel",
+                    "Flügelspitze und Lichter – Unbeschädigt",
+                    "[HEADER] 11. Rechte Tragflügelhinterkante",
+                    "Landeklappe und Querruder – Prüfen",
+                    "[HEADER] 12. Rumpfhinterteil, rechts",
+                    "Schloss der rechten Tür – UNVERRIEGELT", "Statische Druckentnahme – Stopfen entfernt, sauber", "Glasscheiben – Sauber",
+                    "[HEADER] 13. Leitwerke",
+                    "Seitenleitwerk – Prüfen", "Seitenruder und Trimmklappe – PRÜFEN", "Höhenruder und Trimmklappe – PRÜFEN", "Heckkonus und Positionsleuchte – Ohne MOD.151 Unbeschädigt",
+                    "[HEADER] 14. Rumpfhinterteil, links",
+                    "Statische Druckentnahme – Stopfen entfernt, sauber", "Gepäckraumklappe – VERRIEGELT", "Glasscheiben – Sauber"
+                ],
+                "2. Elektrische Anlage": [
+                    "[HEADER] 1. Kabine",
+                    "Ein-Aus-Schalter Schutzschalter des Generators – AUS", "Kraftstoffpumpe – AUS", "Hauptschalter – EIN", "Kraftstoff- und Triebwerküberwachungstafel (Mit MOD.182) – Geprüft <span class='comment'>(Anmerkung: Wenn die gelbe AMP Lampe während des Tests blinkt = Wartungsdienst rufen)</span>", "V/A-Schalter – V", "Pannenwarntafel – Geprüft", "Fahrwerklampen – Geprüft", "Kraftstoffvorrat-Anzeiger – Prüfen", "Landeklappen – Einfahren", "Instrumentenbeleuchtung – EIN", "Positionsleuchten – EIN", "Antikollisionsleuchten (falls eingebaut) – EIN", "Blitzleuchten (falls eingebaut) – EIN", "Erkennungsleuchten (falls eingebaut, Mit MOD.151) – EIN", "Heizbares Pitotrohr (falls eingebaut) – EIN", "Scheinwerfer – EIN",
+                    "[HEADER] 2. Linker Flügel",
+                    "Positionsleuchte – Brennt", "Antikollisionleuchte (falls eingebaut) – Blinkt", "Erkennungsleuchte (falls eingebaut, Mit MOD.151) – Brennt", "Scheinwerfer – EIN", "Heizbares Pitotrohr (falls eingebaut) – Temperatur prüfen", "Überziehwarnung – Akustisches Signal <span class='comment'>(ANMERKUNG: Vor der Fortführung Scheinwerfer und Pitotrohr auf AUS, um Batterie zu schonen.)</span>",
+                    "[HEADER] 3. Rechter Flügel",
+                    "Positionsleuchte – Brennt", "Antikollisionsleuchte (falls eingebaut) – Blinkt", "Erkennungsleuchte (falls eingebaut) – Brennt",
+                    "[HEADER] 4. Flugzeugheck",
+                    "Positionsleuchte – Brennt", "Blitzleuchte (falls eingebaut) – Blinkt", "Antikollisionsleuchte (falls eingebaut) – Blinkt",
+                    "[HEADER] 5. Kabine",
+                    "Positionsleuchten – AUS", "Blitzleuchten (falls eingebaut) – AUS", "Antikollisionsleuchten (falls eingebaut) – AUS", "Erkennungsleuchten (falls eingebaut) – AUS", "Heizbares Pitotrohr (falls eingebaut) – AUS", "Scheinwerfer – AUS", "Instrumentenbeleuchtung – AUS", "Hauptschalter – AUS"
+                ],
+                "3. Vor dem Anlassen des Triebwerks": [
+                    "Vorflugkontrolle – Durchgeführt", "Türen – GESCHLOSSEN <span style='color: yellow;'>(sich vergewissern, dass die Haken eingerastet sind)</span>", "Hauptschalter – AUS", "Parkbremse – Angezogen", "Sitze – EINGESTELLT UND EINGERASTET", "Anschnallgurte, Schultergurte – ANGELEGT UND VERRIEGELT", "Steuerung – Freigängigkeit und Ausschläge prüfen", "Höhenrudertrimmung – Ausschlag prüfen", "Seitenrudertrimmung – Ausschlag prüfen", "Tankwahlschalter – OFFEN (Links oder rechts)", "Schutzschalter (seitliches Brett) – Gedrückt", "Zündschalter – AUS", "Notbetätigung des Fahrwerks – GEDRÜCKT", "\"Radio master\"-Schalter (falls eingebaut) – AUS", "Fahrwerkbetätigung – AUSGEFAHREN", "\"Alternate Air\" – GEDRÜCKT", "Notstatik (falls eingebaut) – GEDRÜCKT", "Klimaanlage (falls eingebaut) – AUS"
+                ],
+                "4. Anlassen des Triebwerks": [
+                    "[HEADER] Anlassen", "Hauptschalter – EIN", "Parkbremswarnleuchte – Brennt", "Antikollisionsleuchten (falls eingebaut) – EIN", "Propeller – GANZ AUF KLEINE STEIGUNG", "Gas – 1/4 OFFEN", "Gemisch – GANZ ARM (Schnellstopp)", "Kraftstoffpumpe – EIN", "Gemisch – VOLL AUF REICH (bis ein Kraftstoff-durchfluss festgestellt wird, 3 bis 5 Sek. dann auf Schnellstopp)", "Kraftstoffpumpe – AUS", "Flugzeugbereich – Frei", "Zünd-/ Anlassschalter – ANLASSEN (max. 10 Sek.)", "Sobald das Triebwerk anspringt : Zündschalter – BEIDE", "Gemisch – VOLL AUF REICH", "Öldruck – Prüfen", "Triebwerk – 1000 bis 1200 U/Min während des Warmlaufens",
+                    "[HEADER] ÜBERSCHWEMMTES TRIEBWERK",
+                    "Das \"Verfahren bei warmem Triebwerk\" ohne das 1/4 offene Gas wiederaufnehmen <span class='comment'>(Anmerkung: Siehe Abschnitt 2 \"Betriebsgrenzen\" für die Betriebsgrenzen des Anlassers)</span>"
+                ],
+                "5. Nach dem Anlassen": [
+                    "[HEADER] PRÜFUNG DER STROMERZEUGUNG",
+                    "Ein-Aus-Schalter Schutzschalter des Generators – AUS", "Generatorlampe – BRENNT", "Voltmeter – Im gelben Bereich (Mit MOD.182: > 24 V)", "Ein-Aus-Schalter Schutzschalter des Generators – EIN", "Generatorlampe – AUS", "Voltmeter – Im grünen Bereich (Mit MOD.182: 26&lt;V&lt;29)", "Wendezeiger (falls eingebaut) – EIN", "Unterdruckanzeiger (falls eingebaut) – Geprüft", "Test der Pannenwarntafel – Positiv", "Test der Fahrwerklampen – Positiv", "\"Radio master\"-Schalter (falls eingebaut) – EIN", "Alle Funk- und Navigationsgeräte – EIN", "Tankwahlschalter – Beim Schalten auf jeden Tank (minimum 1 Minute) Triebwerksbetrieb prüfen", "Tankwahlschalter – Auf volleren Tank schalten", "Landeklappen – Geprüft und EINGEFAHREN", "TAGBETRIEB : Klimaanlageschalter (falls eingebaut) – AIR COND falls intensiv", "NACHTBETRIEB : Klimaanlageschalter (falls eingebaut) – AUS"
+                ],
+                "6. Rollen": [
+                    "Parkbremse – Gelöst", "Bremsen – Geprüft", "Flugüberwachungsinstrumente – Geprüft", "Rollscheinwerfer – Falls erforderlich", "Drehzahlen über 1200 U/Min – Vermeiden solange die Öltemperatur-Anzeige im gelben Bereich is", "Kreiselinstrumente (künstlicher Horizont, Kurskreisel und Wendezeiger) – Bei Richtungs-Änderungen prüfen"
+                ],
+                "7. Probelauf": [
+                    "Parkbremse – Angezogen", "Reibsperre der Triebwerkhebel – Eingestellt", "Öltemperatur – Im grünen Bereich", "Öldruck – Im grünen Bereich", "Gemisch – VOLL AUF REICH", "Tankwahlschalter – Auf volleren Tank schalten",
+                    "[HEADER] PRÜFUNG DES PROPELLERS :",
+                    "Propeller – GANZ AUF KLEINE STEIGUNG", "Gas – 2000 U/Min", "Propeller – Zweimal verstellen (bis die Drehzahl um 500 U/Min max. abfällt)", "Propeller – Wieder an den Anschlag KLEINE STEIGUNG fahren",
+                    "[HEADER] PRÜFUNG DER ZÜNDMAGNETE :",
+                    "Gas – 2000 U/Min", "Zündschalter – L. dann BEIDE, R. dann BEIDE", "<span class='comment'>Höchstzulässiger Drehzahlabfall: Für jeden Magnet 175 U/Min. Höchstzulässige Drehzahldifferenz zwischen den Magneten 50 U/Min)</span>",
+                    "[HEADER] PRÜFUNG DES \"ALTERNATE AIR\" -BETRIEBS :",
+                    "\"Alternate Air\" – GEZOGEN", "Ladedruck – BEHALTEN", "\"Alternate Air\" – GEDRÜCKT",
+                    "[HEADER] PRÜFUNG DER HÖCHSTDREHZAHL :",
+                    "(oder beim Loslassen der Bremsen vor dem Start) : Vollgas – 2575 U/Min"
+                ],
+                "8. Vor dem Start": [
+                    "Sitze, Anschnallgurte, Schultergurte – Prüfen", "Türen – VERRIEGELT", "Steuerungen – Freigängig", "Höhenrudertrimmung – START-STELLUNG", "Seitenrudertrimmung – START-STELLUNG", "Landeklappen – START-STELLUNG", "Zündschalter – BEIDE", "\"Alternate Air\" – Falls erforderlich", "Propeller – GANZ AUF KLEINE STEIGUNG", "Gemisch – VOLL AUF REICH", "Tankwahlschalter – AUF VOLLSTEN TANK", "Kraftstoffpumpe – EIN", "Öltemperatur – Im grünen Bereich", "Öldruck – Im grünen Bereich", "Voltmeter – Im grünen Bereich (Mit MOD.182: 26 &lt; V &lt; 29)", "Höhenmesser – Eingestellt", "Kurskreisel (falls eingebaut) – Eingestellt", "Horizont (falls eingebaut) – Eingestellt", "Parkbremse – GELÖST - Leuchte AUS", "Zusätzlicher Ventilator (falls eingebaut) – AUS", "Scheinwerfer – Falls erforderlich", "Positionsleuchten – Falls erforderlich", "Heizbares Pitotrohr (falls eingebaut) – Falls erforderlich", "Transponder (falls eingebaut) – EIN 7000", "Klimaanlageschalter (falls eingebaut) – AUS"
+                ],
+                "9. Start / Steigflug": [
+                    "Flugzeug ausrichten - Kurskreisel u. Notkompass – Prüfen", "Gas – Zunehmend Vollgas geben", "Triebwerkparameter – Prüfen", "Geschwindigkeiten – Prüfen",
+                    "[HEADER] STANDARDGESCHWINDIGKEITEN:",
+                    "Abheben bei – 68 kt", "Anfänglicher Steigflug – 75 kt", "In 50 ft Höhe bei positiver Vertikalgeschwindigkeit : Räder – Abbremsen", "Fahrwerkbetätigung – EINFAHREN", "In 300 ft Höhe : Landeklappen – EINFAHREN", "In 1000 ft Höhe : Kraftstoffpumpe – AUS", "Aussenleuchten – Falls erforderlich", "Klimaanlageschalter (falls eingebaut) – AIR COND falls intensiv",
+                    "[HEADER] STEIGFLUG :",
+                    "Gemisch – VOLL AUF REICH", "Ladedruck – 25 inHG", "Propeller – 2500 U/Min", "Beste Steiggeschwindigkeit – 95 kt", "<span class='comment'>(Anmerkung: Der Steigflug kann auch bei höheren Geschwindigkeiten durchgeführt werden (bessere Sicht/Motorkühlung))</span>"
+                                    ],
+                "10. Reiseflug": [
+                    "Reiseflug und Warteschleife – bei 75 %", "Tankwahlschalter – Ungefähr jede halbe Stunde auf den anderen Tank umschalten", "Mengendifferenz zwischen linkem und rechtem Tank – 75 Liter nicht überschreiten", "Unter bekanntem Vereisungsbedingungen darf nicht geflogen werden."
+                ],
+                "11. Sinkflug": [
+                    "Leistung – entsprechend der gewünschten Sinkrate einstellen", "Alle 1500 ft Gas geben (damit Triebwerk nicht zu kalt wird und Zündkerzen nicht verrussen)", "Verlängerte Sinkflüge mit 14 in.Hg-angezeigtem Ladedruck – Nicht unternehmen", "Sitze – EINGESTELLT UND EINGERASTET", "Anschnallgurte, Schultergurte - ANGELEGT UND VERRIEGELT"
+                ],
+                "12. Anflug - Landung": [
+                    "[HEADER] ENDANFLUG :",
+                    "Geschwindigkeit – 86/92 kt", "Landeklappen – START-STELLUNG (bis max. 129 kt)", "Fahrwerk – AUSGEFAHREN", "Kraftstoffpumpe – EIN", "Gemisch – VOLL AUF REICH", "Propeller – GANZ AUF KLEINE STEIGUNG", "Bremsen – Geprüft", "Sitze – EINGESTELLT UND EINGERASTET", "Anschnallgurte, Schultergurte - ANGELEGT UND VERRIEGELT", "Scheinwerfer – EINGESCHALTET",
+                    "[HEADER] VOR DEM AUFSETZEN :",
+                    "Landeklappen – LANDE-STELLUNG (bis max 103 kt)", "Standardgeschwindigkeit - 73 kt", "Klimaanlage (falls eingebaut) – AUS",
+                    "[HEADER] DURCHSTARTEN :",
+                    "Gas – Zunehmend VOLLGAS geben", "Geschwindigkeit – 76/81 kt", "Sobald im Steigflug : Fahrwerkbetätigung – EINGEFAHREN", "Landeklappen – START-STELLUNG", "Geschwindigkeit – 90 kt", "Landeklappen – EINGEFAHREN", "Steigflug zu – 95 kt"
+                ],
+                "13. Nach der Landung": [
+                    "Kraftstoffpumpe – AUS", "Landeklappen – EINGEFAHREN", "Landescheinwerfer – AUS", "Rollscheinwerfer – Falls erforderlich", "Trimmung – START-STELLUNG", "Funkgeräte – Falls erforderlich", "Heizbares Pitotrohr (falls eingebaut) – AUS", "Klimaanlage (falls eingebaut) – Falls erforderlich"
+                ],
+                "14. Triewerk abstellen / Flugzeug parken": [
+                    "Parkbremse – Angezogen", "Wendezeiger – AUS", "Antikollisionsleuchte – AUS", "Lichter – AUS", "Rollscheinwerfer – AUS", "\"Radio master\"-Schalter (falls eingebaut) – AUS", "Klimaanlageschalter (falls eingebaut) – AUS", "Gas  - 1200 U/min", "Gemisch - GANZ ARM (Schnellstop)", "Zündschalter – AUS", "Generator- u. Hauptschalter – AUS", "Tankwahlschalter – ZU", "Schutzabdeckung f. Pitotrohr – ANBRINGEN", "Schutzabdeckung f. Drucksonden – ANBRINGEN", "Ruderfeststellung - ANBRINGEN", "Unterlegkeile/Verankerungsseile – Falls erforderlich", "Besondere Vorkommnisse - MELDEN"
+                ]
+            },
+            "Not-Checkliste": {
+            "TRIEBWERKSTÖRUNGEN: Beim Startlauf": [
+                "Gas – LEERLAUF",
+                "Bremsen – BETÄTIGEN",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Zündschalter – AUS",
+                "Hauptschalter – AUS",
+                "Tankwahlschalter – ZU"
+            ],
+            "TRIEBWERKSTÖRUNGEN: Nach dem Abheben": [
+                "Geschwindigkeit – 70/76 kt",
+                "Gemisch – VOLL AUF REICH",
+                "Tankwahlschalter – AUF DEN ANDEREN TANK UMSCHALTEN",
+                "Kraftstoffpumpe – EIN",
+                "<span class='comment'>WARNUNG: BEI TRIEBWERKAUSFALL IM ANFANGSSTEIGFLUG NIEMALS UMKEHREN!</span>",
+                "[HEADER] Wenn das Triebwerk nicht wieder anspringt:",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Tankwahlschalter – ZU",
+                "Kraftstoffpumpe – AUS",
+                "Fahrwerkbetätigung – FALLS ERFORDERLICH",
+                "Gelände – GERADE AUS",
+                "Zündschalter – AUS",
+                "Hauptschalter – AUS"
+            ],
+            "TRIEBWERKSTÖRUNGEN: Im Flug": [
+                "Gleitfluggeschwindigkeit – 92 kt",
+                "Gemisch – VOLL AUF REICH",
+                "Kraftstoffvorrat-Anzeiger – PRÜFEN",
+                "Tankwahlschalter – AUF DEN ANDEREN TANK UMSCHALTEN",
+                "Zündschalter – BEIDE",
+                "Kraftstoffpumpe – EIN",
+                "HINWEIS: Falls unabsichtlich in Vereisungsbedingungen: – \"Alternate Air\" VOLLSTÄNDIG GEZOGEN",
+                "[HEADER] Wenn das Triebwerk nicht wieder anspringt:",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Gas – MITTEL-STELLUNG",
+                "Anlasser (wenn Propeller steht) – BETÄTIGEN",
+                "Gemisch (wenn Triebwerk durchdreht) – LANGSAM AUF REICH STELLEN BIS ES WIEDER ANSPRINGT"
+            ],
+            "NIEDRIGER ÖLDRUCK": [
+                "Ölwarnlampe – BRENNT",
+                "Druckanzeiger – IM UNTEREN ROTEN BEREICH",
+                "Gas – SO WEIT WIE MÖGLICH ZURÜCK",
+                "Öltemperatur – GEPRÜFT",
+                "HINWEIS: Wenn Öltemperatur im roten Bereich: – GAS DROSSELN (Notlandung vorbereiten)"
+            ],
+            "ABFALL DES KRAFTSTOFFDRUCKS": [
+                "Kraftstoffpumpe – EIN",
+                "Kraftstoffvorrat-Anzeiger – GEPRÜFT",
+                "Tankwahlschalter – AUF DEN ANDEREN TANK UMSCHALTEN"
+            ],
+            "RAUHER TRIEBWERKSLAUF": [
+                "HINWEIS: Ein rauher Triebwerkslauf ist im allgemeinen auf einen schlechten Zustand der Kerzen oder ein zu fettes Gemisch zurückzuführen.",
+                "Gemisch – ERNEUT EINSTELLEN",
+                "Wenn der rauhe Lauf nicht aufhört:",
+                "Drehzahl – FÜR RUHIGSTEN LAUF WÄHLEN (so schnell wie möglich landen)"
+            ],
+            "STÖRUNG DER PROPELLEREINSTELLUNG": [
+                "Öldruck – GEPRÜFT",
+                "Öltemperatur – GEPRÜFT",
+                "Gas – FALLS ERFORDERLICH",
+                "Geschwindigkeit – VERMINDERT",
+                "HINWEIS: Schnelle Leistungserhöhung vermeiden.",
+                "WARNUNG: HÖCHSTZULÄSSIGE DREHZAHL: 2575 U/Min!"
+            ],
+            "NOTLANDUNG MIT STEHENDEM TRIEBWERK": [
+                "Gleitfluggeschwindigkeit – 92 kt",
+                "Funk (auf 121.5 MHz/geeignete Frequenz) – MAYDAY RUFEN (Position und Absicht angeben)",
+                "Sitze – EINGESTELLT UND EINGERASTET",
+                "Anschnallgurte, Schultergurte – ANGELEGT UND VERRIEGELT",
+                "Fahrwerk-betätigung – FALLS ERFORDERLICH (Gras/Acker: EINGEFAHREN empfohlen)",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Tankwahlschalter – ZU",
+                "Zündschalter – AUS",
+                "Landeklappen – FALLS ERFORDERLICH",
+                "[HEADER] Wenn die Landung gesichert ist:",
+                "Landeklappen – LANDE-STELLUNG",
+                "Anfluggeschwindigkeit – 70/76 kt",
+                "Hauptschalter – AUS",
+                "Türen – entriegeln"
+            ],
+            "VORSORGLICHE LANDUNG MIT TRIEBWERKLEISTUNG": [
+                "Landeklappen – LANDE-STELLUNG",
+                "Anfluggeschwindigkeit – 70/76 kt",
+                "Funk – POSITION UND ABSICHT DURCHGEBEN",
+                "Sitze – EINGESTELLT UND EINGERASTET",
+                "Anschnallgurte, Schultergurte – ANGELEGT UND VERRIEGELT",
+                "Gelände – ÜBERFLUG des gewählten Geländes",
+                "Fahrwerkbetätigung – FALLS ERFORDERLICH",
+                "Hauptschalter – AUS",
+                "Aufsetzen – MIT MINDESTFAHRT UND BUGRAD HOCHHALTEN",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Tankwahlschalter – ZU",
+                "Zündschalter – AUS",
+                "Bremsen – FALLS ERFORDERLICH"
+            ],
+            "NOTWASSERUNG": [
+                "Funk (auf 121.5 MHz/geeignete Frequenz) – MAYDAY RUFEN (Position und Absicht angeben)",
+                "Fahrwerkbetätigung – EINGEFAHREN",
+                "Landeklappen – LANDE-STELLUNG",
+                "Sitze – EINGESTELLT UND EINGERASTET",
+                "Anschnallgurte, Schultergurte – ANGELEGT UND VERRIEGELT",
+                "Geschwindigkeit – 70/76 kt",
+                "Anflugrichtung – Parallel zu den Wellen",
+                "[HEADER] Vor der Wasserberührung:",
+                "Hauptschalter – AUS",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Tankwahlschalter – ZU",
+                "Zündschalter – AUS",
+                "Aufsetzen – MINDESTFAHRT, BUGRAD HOCHHALTEN"
+            ],
+            "NOTSINKFLUG": [
+                "Gas – FALLS ERFORDERLICH LEERLAUF",
+                "Geschwindigkeit – 129 kt",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Sinkflug zu VLE – 139 kt",
+                "HINWEIS: Nach langem Sinkflug Leistung nur langsam erhöhen (Zylinderkopftemperatur niedrig)!"
+            ],
+            "BRÄNDE": [
+                "[HEADER] TRIEBWERKBRAND BEIM ANLASSEN:",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Anlasser (max. 10 Sek.) – WEITER DURCHDREHEN",
+                "Gas – VOLLGAS",
+                "Tankwahlschalter – ZU",
+                "----- Wenn das Feuer nicht erlischt -----",
+                "Hauptschalter – AUS",
+                "Zündschalter – AUS",
+                "Evakuierung / Löschen – Passagiere evakuieren und Brandherd bekämpfen",
+                "[HEADER] TRIEBWERKBRAND IM FLUG:",
+                "Sichtbare Erscheinung – RAUCH - FLAMMEN",
+                "Tankwahlschalter – ZU",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Kraftstoffpumpe – AUS",
+                "Gas – VOLLGAS",
+                "Kabinenbelüftung / Beschlagverhinderung – FEUERSCHUTZ",
+                "[HEADER] Nach Stillstand des Triebwerks:",
+                "Zündschalter – AUS",
+                "Ein-Aus-Schalter Schutzschalter des Generators – AUS",
+                "Notlandung – DURCHFÜHREN (Siehe \"Notlandung mit stehendem Triebwerk\")",
+                "WARNUNG: NIEMALS VERSUCHEN, DAS TRIEBWERK NACH EINEM BRAND WIEDERANZULASSEN!",
+                "[HEADER] KABELBRAND IM FLUG:",
+                "BRAND im TRIEBWERKRAUM:",
+                "Hauptschalter – AUS",
+                "Kabinenbelüftung / Beschlagverhinderung – FEUERSCHUTZ",
+                "Landung – So schnell wie möglich landen",
+                "[HEADER] BRAND in der KABINE:",
+                "Hauptschalter – AUS",
+                "Ein-Aus-Schalter Schutzschalter des Generators – AUS",
+                "Alle elektrischen Systeme (außer Zündung) – AUS",
+                "Kabinenbelüftung / Beschlagverhinderung – FEUERSCHUTZ",
+                "Feuerlöscher (falls eingebaut) – BENUTZEN",
+                "Wenn der Brand gelöscht zu sein scheint und elektr. Energie für den Weiterflug benötigt wird:",
+                "Hauptschalter – EIN",
+                "Schutzschalter – Schadhaften Kreis PRÜFEN, nicht wieder einschalten",
+                "Funkgeräte und andere Geräte – NACH UND NACH WIEDER IN BETRIEB SETZEN",
+                "Kabinenbelüftung – ÖFFNEN wenn das Feuer gelöscht ist",
+                "[HEADER] KABINENBRAND WÄHREND DES FLUGS:",
+                "Hauptschalter – AUS",
+                "Kabinenbelüftung / Beschlagverhinderung – FEUERSCHUTZ",
+                "Feuerlöscher (falls eingebaut) – BENUTZEN",
+                "VORSICHT: Nach Benutzung im Flug Kabine teilweise öffnen / lüften (Erstickungsgefahr verhindern)! So schnell wie möglich landen.",
+                "[HEADER] FLÜGELBRAND WÄHREND DES FLUGS:",
+                "Positionsleuchten und Landescheinwerfer – AUS",
+                "Antikollisionsleuchten (falls eingebaut) – AUS",
+                "Heizbares Pitotrohr (falls eingebaut) – AUS",
+                "Landung – So schnell wie möglich landen"
+            ],
+            "VEREISUNG": [
+                "WARNUNG: UNTER BEKANNTEN VEREISUNGSBEDINGUNGEN DARF NICHT GEFLOGEN WERDEN!",
+                "Kabinentemperatur – GANZ WARM",
+                "Heizbares Pitotrohr (falls eingebaut) – EIN",
+                "Beschlagverhinderung – OFFEN",
+                "\"Alternate Air\" – GRÜNDLICH ZIEHEN",
+                "Triebwerk – DIE LEISTUNG ERHÖHEN (nicht in den roten Bereich)",
+                "Propeller – Von Zeit zu Zeit Drehzahl verändern (Eisansatz gering halten)",
+                "Flugweg – Bereich der Vereisung durch Umkehren oder Höhenänderung schnell verlassen",
+                "HINWEIS: Bei Eisansatz erhöht sich die Überziehgeschwindigkeit! Bei Kurven/Landeanflug berücksichtigen."
+            ],
+            "STÖRUNGEN IN DER FAHRWERKANLAGE": [
+                "FAHRWERK FÄHRT NICHT EIN:",
+                "DIE DREI GRÜNEN LAMPEN BLEIBEN AN:",
+                "Fahrwerkbetätigung – PRÜFEN OB EINGEFAHREN",
+                "Fahrwerk-Schutzschalter – PRÜFEN OB EINGESCHALTET",
+                "Notbetätigung des Fahrwerks – PRÜFEN OB GEDRÜCKT",
+                "Wenn das Fahrwerk nicht einfährt: –",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Fahrwerklampen – PRÜFEN OB DIE GRÜNEN ANBLEIBEN",
+                "HINWEIS: (Mit ausgefahrenem Fahrwerk weiterfliegen bis max. 139 kt)",
+                "[HEADER] DIE ROTE LAMPE BLEIBT AN (MIT ODER OHNE GRÜN):",
+                "Fahrwerk-Schutzschalter – AUSSCHALTEN",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Fahrwerk-Schutzschalter – EINSCHALTEN",
+                "Fahrwerklampen PRÜFEN OB DIE GRÜNEN ANBLEIBEN UND DIE ROTE AUSBLEIBT (Weiterfliegen bis Max. 139 kt)",
+                "[HEADER] EINE GRÜNE LAMPE BLEIBT AN, ROTE LAMPE AUS:",
+                "Landeklappen – START-STELLUNG",
+                "Beste Geschwindigkeit – 85 kt",
+                "Höchstgeschwindigkeit – 97 kt",
+                "Fahrwerk-Schutzschalter – AUSSCHALTEN",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Notbetätigung des Fahrwerks – ZIEHEN",
+                "Fahrwerklampen – PRÜFEN OB DIE GRÜNEN ANBLEIBEN",
+                "HINWEIS: Mit ausgefahrenem Fahrwerk weiterfliegen, bis zum Reiseziel oder einem zweckmäßigen Ausweichflugplatz",
+                "HINWEIS: Verfahren \"Landung mit nicht verriegeltem Fahrwerk\" aus Vorsicht ausführen",
+                "[HEADER] FAHRWERK FÄHRT NICHT AUS -- EINE ODER MEHRERE GRÜNE LAMPEN BLEIBEN AUS:",
+                "Hauptschalter – EIN",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Fahrwerk-Schutzschalter – PRÜFEN OB EINGESCHALTET",
+                "Fahrwerklampen – LEUCHTEN WÄHREND DES TESTS AUF",
+                "Landeklappen – START-STELLUNG",
+                "Höchstgeschwindigkeit – 97 kt",
+                "HINWEIS: Das Fahrwerk sollte normal ausfahren und verriegeln.",
+                "Wenn dies nicht geschieht (Notausfahren):",
+                "Fahrwerkbetätigung – EINGEFAHREN",
+                "Fahrwerk-Schutzschalter – AUSGESCHALTET",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Notbetätigung des Fahrwerks – GEZOGEN",
+                "\"Fahrwerk ausgefahren\" - Lampen (grün) – EIN",
+                "\"Fahrwerk in Transition\" - Lampe (rot) – AUS",
+                "HINWEIS: Im Falle völligen Ausfalls der elektr. Anlage muß das Fahrwerk beim durchführen der obigen Verfahren ausgefahren sein. Die Fahrwerksanzeigelampen werden nicht aufleuchten",
+                "[HEADER] EINE ODER MEHRERE GRÜNE LAMPEN BLEIBEN BEIM TEST AUS:",
+                "HINWEIS: Slippen und Abfangbögen fliegen ohne das Lastvielfache zu überschreiten, um Verriegeln des ausgefahrenen Fahrwerks unterstützen)",
+                "\"Fahrwerk in Transition\"-Lampe (rot) – AUS",
+                "\"Fahrwerk in Transition\"-Lampe (rot) – LEUCHTET WÄHREND DES TESTS AUF",
+                "HINWEIS: Die betroffene grüne Anzeigelampe ist vermutlich durchgebrannt",
+                "Am Kontrollturm vorbeifliegen um Fahrwerkstellung zu prüfen (Vorsorgliche Landung)"
+            ],
+            "LANDUNG MIT NICHT VERRIEGELTEM FAHRWERK": [
+                "Fahrwerkstellung – MIT DEM TURM PRÜFEN",
+                "[HEADER] FAHRWERK SCHEINT AUSGEFAHREN UND VERRIEGELT ZU SEIN:",
+                "Fahrwerk-Schutzschalter – EIN",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Notbetätigung des Fahrwerks – GEDRÜCKT (Vorsorgliche Landung durchführen)",
+                "Vorsorgliche Landung:",
+                "Landung:",
+		"[HEADER] BUGFAHRWERK IST NICHT VERRIEGELT:",
+                "Landeklappen – LANDE-STELLUNG",
+                "Geschwindigkeit – 65/70 kt",
+                "Sitze / Gurte – EINGESTELLT, ANGELEGT UND VERRIEGELT",
+                "[HEADER] Beim Endanflug Triebwerk abstellen:",
+                "Hauptschalter – AUS",
+                "Gemisch – GANZ ARM (Schnellstopp)",
+                "Tankwahlschalter – ZU",
+                "Zündschalter – AUS",
+                "[HEADER] Nach Bodenberührung des Hauptfahrwerks:",
+                "HINWEIS: Bug hochhalten ohne zu bremsen. Erst bei Bugrad-Bodenkontakt mäßig bremsen.",
+                "[HEADER] HAUPTFAHRWERK IST NICHT VERRIEGELT (NUR EIN BEIN AUSGEFAHREN):",
+                "HINWEIS: Landung mit komplett eingefahrenem Fahrwerk durchführen!",
+                "[HEADER] Fahrwerk einfahren:",
+                "Notbetätigung des Fahrwerks – GEDRÜCKT",
+                "Fahrwerk-Schutzschalter – EIN",
+                "Fahrwerkbetätigung – EINGEFAHREN",
+                "Landung (wenn möglich auf Gras):",
+                "Landeklappen – LANDE-STELLUNG",
+                "Geschwindigkeit – 65/70 kt",
+                "[HEADER] Vor Bodenberührung:",
+                "Hauptschalter – AUS",
+                "Gemisch – GANZ ARM",
+                "Tankwahlschalter – ZU",
+                "Zündschalter – AUS"
+            ],
+            "LANDUNG OHNE HÖHENSTEUERUNG": [
+                "Flugzeugsteuerung – Mit Trimmung und Gas steuern",
+                "Langer Endanflug:",
+                "Geschwindigkeit – 80 kt",
+                "Landeklappen – LANDE-STELLUNG",
+                "Fahrwerkbetätigung – AUSGEFAHREN",
+                "Kraftstoffpumpe – EIN",
+                "Gemisch – VOLL AUF REICH",
+                "Propeller – ANSCHLAG KLEINE STEIGUNG",
+                "Gas und Höhenrudertrimmung – EINSTELLEN UM SINKRATE NIEDRIGER ALS 500 ft/min ZU ERHALTEN",
+                "Endanflug:",
+                "HINWEIS: Nahe dem Boden mit Trimmung abfangen.",
+                "WARNUNG: – ERST NACH AUFSETZEN DER RÄDER GAS DROSSELN!"
+            ],
+            "STÖRUNG DES \"RADIO MASTER\"-SCHALTERS": [
+                "HINWEIS: Wenn Funknavigationsausrüstungen unter Spannung nicht gesetzt werden können, da der \"RADIO MASTER\"-Schalter nicht funktioniert:",
+                "\"R.M. SWITCH\" Zug-Druck-Schutzschalter – AUSGELÖST",
+                "HINWEIS: Die Funknavigationsausrüstungen sind wieder angelegt und der Flug kann normal fortsetzen."
+            ],
+            "ELEKTRISCHE STÖRUNG": [
+                "AUSFALL DES GENERATORS:",
+                "UNTERSPANNUNGSWARNLEUCHTE AN:",
+                "Generatorschutzschalter – PRÜFEN UND EIN",
+                "Ein-Aus-Schalter des Generators – AUS- UND WIEDER EINSCHALTEN",
+                "Wenn Unterspannungswarnleuchte weiterhin an bleibt:",
+                "Ohne MOD.182:",
+                "Voltmeter:",
+                "Im grünen Bereich – Flug fortsetzen",
+                "im roten/gelben Bereich:",
+                "Ein-Aus-Schalter Schutzschalter des Generators – AUS",
+                "Mit MOD.182:",
+                "Voltmeter:",
+                "26 < V < 29 – FLUG FORTSETZEN",
+                "V < 26 – Ein/Aus-Schalter des Generators - AUS",
+                "HINWEIS: EMPFEHLUNG: Nicht erforderliche Verbraucher und Klimaanlage AUS. Flugzeit auf Batterie begrenzt (Nacht-IFR ca. 40 Min).",
+                "AUSFALL EINES ELEKTRISCHEN GERÄTES:",
+                "Sicherungstafel – Überprüfen",
+                "HINWEIS: Falls un Schutzschalter aus ist, ein einziges Mal wieder einschalten. Falls er erneut auslöst, nicht wieder einschalten (Gerät defekt)."
+                ]
+            }
+        },
+        "PA28-161 Cadet": {
+            "Normalcheckliste": {
+                "1 - VORBEREITUNG & COCKPIT": [
+                    "Flugzeugzustand - LUFTTÜCHTIG, PAPIERE AN BORD", "Wetter - GEEIGNET", "Gepäck - GEWOGEN, VERSTAUT, VERZURRT",
+                    "Masse und Schwerpunkt - INNERHALB ZULÄSSIGER GRENZEN", "Navigation - VORGEPLANT", "Karten und Navigationsausrüstung - AN BORD",
+                    "Flugleistung und Reichweite - BERECHNET UND SICHER ERREICHBAR", "[header] VORFLUGPRÜFUNG – COCKPIT", "Steuerhorn - SICHERUNGS-GURTE ENTFERNEN",
+                    "Alle Schutzschalter - PRÜFEN, daß EINGEDRÜCKT", "Avionik - AUS", "Parkbremse - FESTSTELLEN", "Elektrische Schalter - AUS",
+                    "Zünd/Anlasser-Schalter - AUS", "Gemischhebel - SCHNELLSTOPP", "Batterieschalter - EIN", "Kraftstoffvorrat-Aanzeiger - KRAFTSTOFF-VORRAT PRÜFEN",
+                    "Warnleuchttafel - PRÜFEN", "Batterieschalter - AUS", "Flugsteuerorgane - PRÜFEN", "Flügelklappen - PRÜFEN",
+                    "Trimmung - PRÜFEN, AUF NEUTRAL STELLEN", "Entwässerungsventil der Gesamtdruckanlage - ENTLEEREN, SCHLIESSEN",
+                    "Entwässerungsventil der Statikdruckanlage - ENTLEEREN, SCHLIESSEN", "Fenster - AUF SAUBERKEIT PRÜFEN",
+                    "Schleppstange - IM LFZ u. VERSTAUT", "Gepäck - SICHERN"
+                ],
+                "2 - AUSSEN-CHECK \n(Rechter Flügel & Bug)": [
+                    "[HEADER] RECHTER FLÜGEL", "Oberflächenzustand - FREI von EIS, REIF, SCHNEE",
+                    "Flügelklappe und Querruder - FREIGÄNGIGKEIT PRÜFEN, FREI von EIS, REIF, SCHNEE", "Lager - FREIGÄNGIGKEIT PRÜFEN",
+                    "Statische Ableiter - PRÜFEN", "Flügelspitze und Leuchten - PRÜFEN",
+                    "Kraftstofftank - INHALT PRÜFEN - VERSCHLUSS SCHLIESSEN",
+                    "Kraftstofftanksumpf - ENTLEEREN und auf Wasser, Sinkstoffe und richtigen Kraftstoff PRÜFEN", "Kraftstofftankentlüftung - FREI",
+                    "Verankerung und Bremsklotz - ENTFERNEN", "Hauptfahrwerkfederbein - RICHTIGE FÜLLUNG (114 mm ausgefedert)", "Reifen - PRÜFEN",
+                    "Bremsbelag und -scheiben - PRÜFEN", "Frischlufteinlaß - FREI", "[HEADER] BUG", "Kraftstoff und Öl - AUF LECKSTELLEN PRÜFEN",
+                    "Verkleilung - SICHER BEFESTIGT", "Windschutzscheibe - SAUBER", "Propeller und Propellerhaube - PRÜFEN", "Lufteinlässe - FREI",
+                    "Generatorkeilriemen - SPANNUNG PRÜFEN", "Landescheinwerfer - PRÜFEN", "Bremsklotz - ENTFERNEN",
+                    "Bugfahrwerkfederbein - RICHTIGE FÜLLUNG (83 mm ausgefedert)", "Bugfahrwerkreifen - PRÜFEN", "Öl - ÖLSTAND PRÜFEN",
+                    "Ölmeßstab - FESTER SITZ (handfest)", "Kraftstoffsieb - Kraftstoff ABLASSEN, auf Wasser, Sinkstoffe und richtige Sorte PRÜFEN"
+                ],
+                "3 - AUSSEN-CHECK \n(Linker Flügel & Rumpf)": [
+                    "[HEADER] LINKER FLÜGEL", "Oberflächenzustand - FREI von EIS, REIF, SCHNEE", "Frischlufteinlaß - FREI",
+                    "Hauptfahrwerkfederbein - RICHTIGE FÜLLUNG (114 mm ausgefedert)", "Reifen - PRÜFEN", "Bremsbelag und -scheiben - PRÜFEN",
+                    "Kraftstofftanksumpf - ENTLEEREN und auf Wasser, Sinkstoffe und richtigen Kraftstoff PRÜFEN", "Kraftstofftankentlüftung - FREI",
+                    "Verankerung und Bremsklotz - ENTFERNEN", "Kraftstofftank - INHALT PRÜFEN - VERSCHLUSS SCHLIESSEN",
+                    "Staurohr - SCHUTZHÜLLE Entfernen, FREIE ÖFFNUNGEN PRÜFEN", "Flügelspitze und Leuchten - PRÜFEN",
+                    "Querruder und Flügelklappe - FREIGÄNGIGKEIT PRÜFEN, FREI von EIS, REIF, SCHNEE", "Lager - FREIGÄNGIGKEIT PRÜFEN",
+                    "Statische Ableiter - PRÜFEN", "[HEADER] RUMPF", "Antennen - PRÜFEN", "Leitwerk - FREI von EIS, REIF, SCHNEE", "Frischlufteinlaß - FREI",
+                    "Stabilator und Trimmklappe - FREIGÄNGIGKEIT PRÜFEN", "Verankerung - ENTFERNEN", "Batterieschalter - EIN",
+                    "Cockpit-Beleuchtung - PRÜFEN", "Positions- und Blitzwarnleuchten - PRÜFEN", "Überziehwarnhorn - PRÜFEN",
+                    "Staurohrheizung - PRÜFEN", "Alle Schalter - AUS", "Fluggäste - AN BORD", "Kabinentür - SCHLIESSEN UND VERRIEGELN",
+                    "Bauch- und Schultergurte - ANLEGEN, ANPASSEN, Spanntrommel PRÜFEN"
+                ],
+                "4 - TRIEBWERKSTART & STANDLAUF": [
+                     "[HEADER] VOR DEM ANLASSEN DES TRIEBWERKS", "Vergaservorwärmung - GANZ AUS",
+                    "Tankwahlventil - auf GEWÜNSCHTEN TANK", "Funkgeräte - AUS", "Generatorschalter - EIN", "[HEADER] NORMALES ANLASSEN BEI KALTEM TRIEBWERK", "Gashebel - 6 mm ÖFFNEN", "Batterieschalter - EIN", "Zusammenstoßwarnleuchte - EIN",
+                    "Elektrische Kraftstoffpumpe - EIN", "Gemischhebel - VOLL REICH", "Anlasser - EINSCHALTEN", "Gashebel - NACHSTELLEN",
+                    "Öldruck - PRÜFEN", "<span class='comment'>Wenn das Triebwerk nicht innerhalb von 10 s anspringt, Anlaßkraftstoff einspritzen and Anlaßverfahren wiederholen.</span>",
+                    "[HEADER] ROLLEN", "Parkbremse - LÖSEN", "Rollbereich - FREI", "Gashebel - LANGSAM GAS GEBEN", "Bremsen - PRÜFEN",
+                    "Lenkung - PRÜFEN", "[HEADER] PRÜFUNG AM BODEN", "Parkbremse - FESTSTELLEN", "Gashebel - 2000/min",
+                    "Zündmagnete - höchstzulässiger Abfall 175/min, höchstzulässige Differenz 50/min", "Unterdruck - 4,8 bis 5,1 in.Hg",
+                    "Öltemperatur - PRÜFEN", "Öldruck - PRÜFEN", "Warnleuchttafel - Prüfknopf DRÜCKEN", "Vergaservorwärmung - PRÜFEN",
+                    "Elektrische Kraftstoffpumpe - AUS", "Kraftstoffdruck - PRÜFEN", "Gashebel - Gas ZURÜCKNEHMEN"
+                ],
+                "5 - VOR DEM START & START": [
+                    "[HEADER] VOR DEM START", "Batterieschalter - EIN", "Generatorschalter - EIN", "Flugüberwachungsinstrumente - PRÜFEN",
+                    "Tankwahlventil - AUF RICHTIGEN TANK", "Elektrische Kraftstoffpumpe - EIN", "Triebwerküberwachungsinstrumente - PRÜFEN",
+                    "Vergaservorwärmung - AUS", "Sitzlehnen – AUFGERICHTET", "Gemischhebel – EINSTELLEN", "Anlaßeinspritzknopf - VERRIEGELT",
+                    "Bauch-/Schultergurte - ANGELEGT UND ANGEPASST", "Leere Sitze - GURTE STRAFF GEZOGEN", "Flügelklappen - EINSTELLEN",
+                    "Trimmung - EINSTELLEN", "Steuerorgane und Ruder - FREIGÄNGIG", "Tür - VERRIEGELT", "Klimaanlage - AUS",
+                    "[HEADER] START", "[HEADER] NORMALER START", "Flügelklappen - EINSTELLEN", "Trimmung - EINSTELLEN", "Auf 45 bis 55 KIAS beschleunigen",
+                    "Steuerhorn - ZIEHEN, um das Flugzeug in Steigfluglage zu bringen", "[HEADER] START MIT 0°-KLAPPENSTELLUNG",
+                    "Flügelklappen - EINGEFAHREN", "Auf 40 bis 50 KIAS (je nach Flugmasse) beschleunigen.",
+                    "Steuerhorn - ZIEHEN, um das Flugzeug in Steigfluglage zu bringen",
+                    "Auf 44 bis 55 KIAS (je nach Flugmasse) beschleunigen und diese Geschwindigkeit halten, bis alle Hindernisse überflogen sind; dann mit 79 KIAS steigen.",
+                    "[HEADER] START MIT 25°-KLAPPENSTELLUNG", "Flügelklappen - 25° (zweite Raste)", "Auf 40 bis 50 KIAS (je nach Flugmasse) beschleunigen.",
+                    "Steuerhorn - ZIEHEN, um das Flugzeug in Steigfluglage zu bringen",
+                    "Auf 44 bis 55 KIAS (je nach Flugmasse) beschleunigen und diese Geschwindigkeit halten, die alle Hindernisse überflogen sind; dann mit 79 KIAS steigen.",
+                    "Flügelklappen - LANGSAM EINFAHREN"
+                ],
+                "6 - FLUGPHASEN, LANDUNG & ABSTELLEN": [
+                    "[HEADER] STEIGFLUG", "Geschwindigkeit für bestes Steigen (Klappen eingefahren) - 79 KIAS",
+                    "Geschwindigkeit für besten Steigwinkel (Klappen eingefahren) - 63 KIAS", "Reisesteigfluggeschwindigkeit - 87 KIAS",
+                    "Elektrische Kraftstoffpumpe - AUS in gewünschter Höhe", "[HEADER] REISEFLUG", "Normale maximale Reiseleistung - 75%",
+                    "Leistung - gemäß Leistungs-Tabelle EINSTELLEN", "Gemisch - entsprechend EINSTELLEN", "[HEADER] SINKFLUG",
+                    "Leistung - 2500/min", "Fluggeschwindigkeit - 126 KIAS", "Gemischhebel - REICH", "Vergaservorwärmung - EIN, falls erforderlich",
+                    "[HEADER] ANFLUG UND LANDUNG", "Tankwahlventil - RICHTIGER TANK", "Rückenlehnen der Sitze - AUFGERICHTET",
+                    "Bauch-/Schultergurte - ANLEGEN UND ANPASSEN", "Elektrische Kraftstoffpumpe - EIN", "Gemischhebel - EINSTELLEN",
+                    "Flügelklappen AUSFAHREN – bei max. 103 KIAS", "Klimaanlage - AUS", "Auf 70 KIAS austrimmen", "Endanfluggeschwindigkeit (Klappen 40°) - 63 KIAS",
+                    "[HEADER] ABSTELLEN DES TRIEBWERKS", "Flügelklappen - EINFAHREN", "Elektrische Kraftstoffpumpe - AUS", "Alle Schalter für Beleuchtung - AUS",
+                    "Klimaanlage - AUS", "Funkgeräte - AUS", "Gashebel - GANZ ZURÜCK", "Gemischhebel - SCHNELLSTOPP",
+                    "Zünd-/Anlasserschalter - AUS", "Generatorschalter - AUS", "Batterieschalter - AUS", "Trimmung - EINSTELLEN",
+                    "[HEADER] ABSTELLEN DES FLUGZEUGS", "Parkbremse - FESTSTELLEN", "Steuerhorn - mit Gurten SICHERN", "Flügelklappen - VOLL EINFAHREN",
+                    "Bremsklötze - VORLEGEN", "Verankerungen - ANBRINGEN", "Besondere Vorkommnisse - melden"
+                ]
+            },
+            "Not-Checkliste": {
+                "1. Triebwerksstörungen": [
+                    "[HEADER] LEISTUNGSVERLUST BEIM START", "Sichere Fluggeschwindigkeit – HALTEN",
+                    "Wenn ausreichend Bahn verbleibt – SOFORT LANDEN", "Falls keine Bahn mehr verfügbar – FLACHE KURVEN FLIEGEN",
+                    "Hindernissen – AUSWEICHEN", "Klappen – NACH BEDARF VERWENDEN", "Tankwahlventil – AUF VOLLSTEN TANK",
+                    "Elektrische Kraftstoffpumpe – EIN", "Gemisch – REICH", "Vergaservorwärmung – EIN",
+                    "Anlass-Einspritzknopf – VERRIEGELT", "Falls Leistung nicht zurückkehrt – LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] LEISTUNGSVERLUST WÄHREND DES FLUGES", "Fluggeschwindigkeit – 76 KIAS",
+                    "Geeigneten Landeplatz – AUSWÄHLEN", "Tankwahlventil – AUF VOLLSTEN TANK",
+                    "Elektrische Kraftstoffpumpe – EIN", "Gemisch – REICH", "Vergaservorwärmung – EIN",
+                    "Motorinstrumente – PRÜFEN", "Anlass-Einspritzknopf – VERRIEGELT", "Kraftstoffdruck – PRÜFEN",
+                    "Vergaservorwärmung (falls Leistung OK) – AUS", "Elektrische Kraftstoffpumpe (falls Leistung OK) – AUS",
+                    "Falls keine Wiederherstellung – LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] RAUHER TRIEBWERKLAUF", "Vergaservorwärmung – EIN",
+                    "Vergaservorwärmung (nach 1 min weiter rauh) – AUS", "Gemisch – ANPASSEN",
+                    "Elektrische Kraftstoffpumpe – EIN", "Tankventilschalter – AUF VOLLSTEN TANK WECHSELN",
+                    "Motorinstrumente – PRÜFEN", "Magnetcheck – L -> BEIDE -> R -> BEIDE",
+                    "Falls nur ein Magnet ok – MIT REDUZIERTER LEISTUNG LANDEN", "Auf Landung mit stehendem TRIEBWERK – VORBEREITET SEIN",
+                    "[HEADER] VERGASERVEREISUNG", "Vergaservorwärmung – EIN", "Gemisch – AUF RUHIGEN MOTORLAUF EINSTELLEN"
+                ],
+                "2. Notlandung & Trudeln": [
+                    "[HEADER] LANDUNG MIT STEHENDEM TRIEBWERK", "Auf besten Gleitwinkel trimmen – 76 KIAS",
+                    "Geeigneten Landeplatz – AUSWÄHLEN", "Funkmeldung – ABSETZEN FALLS MÖGLICH",
+                    "Gegenanflug – CA. 1000 FT ÜBER PLATZ", "Mit Klappen – 66 KIAS",
+                    "Höhe ggf. abbauen durch – VOLLKREISE / SLIP / KLAPPEN", "Hauptschalter (kurz vor Aufsetzen) – AUS", "Zünd/Anlasserschalter (kurz vor Aufsetzen) – AUS",
+                    "Tankwahlventil (kurz vor Aufsetzen) – ZU", "Gemischhebel (kurz vor Aufsetzen) – SCHNELLSTOPP",
+                    "Bauch- und Schultergurte – STRAFF ANGELEGT", "Türen (kurz vor dem Aufsetzen) - ENTRIEGELN", "Landung – MIT MINIMALER SPEED",
+                    "[HEADER] BEENDIGUNG DES TRUDELNS", "Gashebel – LEERLAUF", "Querruder – NEUTRAL",
+                    "Seitenruder entgegen Drehrichtung – VOLL", "Steuerhorn – VOLL DRÜCKEN",
+                    "Seitenruder (nach Dreh-Ende) – NEUTRAL", "Flugzeug – WEICH ABFANGEN"
+                ],
+                "3. Brandverfahren": [
+                    "[HEADER] BRAND BEIM ANLASSEN", "Anlasser – DURCHDREHEN", "Gemisch – SCHNELLSTOPP",
+                    "Gashebel – ÖFFNEN", "Elektrische Kraftstoffpumpe – AUS", "Tankwahlventil – ZU",
+                    "Falls Motor anspringt – WEITERLAUFEN LASSEN", "Falls Brand anhält – FLUGZEUG VERLASSEN u. VON AUSSEN LÖSCHEN",
+                    "[HEADER] BRAND WÄHREND DES FLUGES (ELEKTRISCH)", "Hauptschalter – AUS", "Kabinenbelüftung – ÖFFNEN",
+                    "Kabinenheizung – AUS", "Landung – SO BALD WIE MÖGLICH",
+                    "[HEADER] TRIEBWERKSBRAND IM FLUG", "Tankwahlventil – ZU", "Gashebel – GESCHLOSSEN",
+                    "Gemisch – SCHNELLSTOPP", "Elektrische Kraftstoffpumpe – AUS", "Heizung/Enteisung – AUS",
+                    "Hauptschalter – AUS (FALLS FUNK NICHT ERFORDERLICH)", "Landung – MIT STEHENDEM TRIEBWERK DURCHFÜHREN"
+                ],
+                "4. Systemfehler (Öl / Kraftstoff / Strom)": [
+                    "[HEADER] ÖLDRUCKVERLUST", "Nächsten Flugplatz – ANFLIEGEN", "Mit Motorausfall – RECHNEN",
+                    "Leistung – NICHT UNNÖTIG VERÄNDERN", "Falls Motor stoppt – LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] ZU HOHE ÖLTEMPERATUR", "Landen – AUF NÄCHSTEM GEEIGNETEN FLUGPLATZ",
+                    "Ursache – PRÜFEN LASSEN", "Öldruck – BEOBACHTEN", "Vorbereitung – AUF LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] KRAFTSTOFFDRUCKABFALL", "Elektrische Kraftstoffpumpe – EIN",
+                    "Tankwahlventil – AUF VOLLSTEN TANK SCHALTEN", "Landung – SO BALD WIE MÖGLICH",
+                    "[HEADER] GENERATORAUSFALL (WARNLEUCHTE)", "Verbraucher einschalten und – AMPEREMETER PRÜFEN",
+                    "Elektrische Last – MINIMIEREN", "Generatorschutzschalter – PRÜFEN", "Generatorschalter – AUS -> EIN",
+                    "Generatorschalter (falls keine Besserung) – AUS", "Batterieschalter – WIE ERFORDERLICH",
+                    "Elektrische Last – MINIMIEREN", "Landung – SO BALD WIE MÖGLICH"
+                ],
+                "5. Kabinen-Vorfälle": [
+                    "[HEADER] OFFENE KABINENTÜR", "Geschwindigkeit – 87–89 KIAS", "Kabinenbelüftung – SCHLIESSEN",
+                    "Schlechtwetterfenster – ÖFFNEN", "Obere Verriegelung – SCHLIESSEN",
+                    "Seitliche Verriegelung – SCHLIESSEN", "Bei beiden offen – ERST SEITLICH, DANN OBEN VERRIEGELN"
+                ]
+            }
+        },
+        "PA28-181 Archer II": {
+            "Normalcheckliste": {
+                "1. Vorflugprüfung": [
+                    "Steuerhornsicherung – ENTFERNEN", "Avionik – AUS", "Hauptschalter – EIN",
+                    "Kraftstoffanzeigen – PRÜFEN", "Hauptschalter – AUS", "Zünd/Anlasserschalter – AUS",
+                    "Flugzeugoberflächen – AUF BESCHÄDIGUNG PRÜFEN", "Ruder – FREI BEWEGLICH",
+                    "Flügel und Ruder – FREI BEWEGLICH UND FREI VON EIS/REIF u. SCHNEE", "Überziehwarnung – PRÜFEN",
+                    "Kraftstoffmenge – VISUELL PRÜFEN", "Tankverschlüsse – SICHERN",
+                    "Tank-Sumpf – ENTLEEREN UND AUF RICHTIGEN KRAFTSTOFF PRÜFEN", "Tankentlüftungen – OFFEN",
+                    "Hauptfahrwerk-Federbein – RICHTIGE FÜLLUNG (114 mm AUSGEFEDERT)", "Hauptfahrwerks-Reifen – PRÜFEN",
+                    "Bremsbeläge – PRÜFEN", "Staurohrschutz – ENTFERNEN UND STAUROHR PRÜFEN", "Windschutzscheibe – SAUBER",
+                    "Propeller und Propellerhaute – PRÜFEN", "Ölstand – PRÜFEN", "Ölmessstab – AUF FESTEN SITZ PRÜFEN (HANDFEST)",
+                    "Motorverkleidung – SICHER BEFESTIGT", "Wartungsklappen – SICHER BEFESTIGT", "Bugrad-Reifen – PRÜFEN",
+                    "Bugrad-Federbein – RICHTIGE FÜLLUNG (83 mm AUSGEFEDERT)", "Generatorriemen – AUF RICHTIGE SPANNUNG PRÜFEN",
+                    "Schleppstange – VERSTAUEN", "Gepäck – SICHERN", "Gepäckraum – VERRIEGELN",
+                    "Kraftstoff-Sieb – ENTLEEREN UND AUF WASSER UND RICHTIGEN KRAFTSTOFF PRÜFEN",
+                    "Hauptsteuerorgane – EINWANDFREIE FUNKTION", "Kabinentür – SCHLIESSEN UND VERRIEGELN",
+                    "Erforderliche Papiere – PRÜFEN DASS AN BORD",
+                    "Bauch- und Schultergurte – ANLEGEN, ANPASSEN, SPANNTROMMEL PRÜFEN"
+                ],
+                "2. Vor dem Anlassen": [
+                    "Parkbremse – WIE ERFORDERLICH SETZEN", "Vergaservorwärmung – GANZ AUS",
+                    "Tankwahlventil – AUF GEWÜNSCHTEN TANK", "Elektrische Geräte – AUS"
+                ],
+                "3. Anlassen des Triebwerks": [
+                    "[HEADER] KALTES TRIEBWERK", "Gashebel – 6 mm ÖFFNEN", "Hauptschalter – EIN",
+                    "Elektrische Kraftstoffpumpe – EIN", "Gemisch – VOLL REICH", "Anlasser – BETÄTIGEN",
+                    "Gashebel – NACHSTELLEN", "Öldruck – PRÜFEN",
+                    "[HEADER] WARMES TRIEBWERK", "Gashebel – CA. 13 mm OFFEN", "Hauptschalter – EIN",
+                    "Elektrische Kraftstoffpumpe – EIN", "Gemisch – VOLL REICH", "Anlasserschalter – START",
+                    "Gashebel – NACHSTELLEN", "Öldruck – PRÜFEN",
+                    "[HEADER] NACH ÜBERFETTUNG", "Gashebel – VOLL", "Hauptschalter – EIN",
+                    "Elektrische Kraftstoffpumpe – AUS", "Gemisch – SCHNELLSTOPP", "Anlasser – BETÄTIGEN",
+                    "Gemisch (nach Anspringen) – VOLL REICH", "Gas – ZURÜCKNEHMEN", "Öldruck – PRÜFEN",
+                    "[HEADER] MIT FREMDSTROM", "Hauptschalter – AUS", "Elektrische Geräte – AUS",
+                    "Fremdstrom – ANSCHLIESSEN", "Normales – ANLASSVERFAHREN", "Drehzahl (nach Start) – NIEDRIG",
+                    "Kabel – ENTFERNEN", "Hauptschalter – EIN", "Amperemeter – PRÜFEN", "Öldruck – PRÜFEN"
+                ],
+                "4. Rollen & Standlauf": [
+                    "[HEADER] ROLLEN", "Bremsklötze – ENTFERNT", "Rollbereich – FREI", "Gashebel – LANGSAM GAS GEBEN",
+                    "Bremsen – PRÜFEN", "Lenkung – PRÜFEN",
+                    "[HEADER] PRÜFUNG AM BODEN", "Parkbremse – FESTSTELLEN", "Gashebel – 2000 RPM",
+                    "[HEADER] MAGNETCHECK", "max. – 175 RPM ABFALL", "max. – 50 RPM DIFFERENZ",
+                    "Unterdruck – PRÜFEN – 5,0 INHG +/- 0,1", "Öltemperatur – PRÜFEN", "Öldruck – PRÜFEN",
+                    "Warnleuchttafel – ZUM PRÜFEN DRÜCKEN", "Vergaservorwärmung – PRÜFEN",
+                    "Elektrische Kraftstoffpumpe – AUS", "Kraftstoffdruck – PRÜFEN", "Gashebel – ZURÜCKNEHMEN"
+                ],
+                "5. Vor dem Start & Start": [
+                    "[HEADER] VOR DEM START", "Hauptschalter – EIN", "Flugüberwachungsinstrumente – PRÜFEN",
+                    "Tankwahlventil – AUF VOLLSTEN TANK", "Elektrische Kraftstoffpumpe – EIN",
+                    "Triebwerküberwachungsinstrumente – PRÜFEN", "Vergaservorwärmung – AUS", "Sitze – AUFGERICHTET",
+                    "Gemisch – EINSTELLEN", "Anlasseinspritzknopf – VERRIEGELT", "Gurte – ANGELEGT",
+                    "Leere Gurte – SICHERN", "Flügelklappen – EINSTELLEN", "Trimmung – EINSTELLEN",
+                    "Steuerung und Ruder – FREI", "Türen – VERRIEGELT (2x)", "Klimaanlage – AUS",
+                    "[HEADER] NORMALSTART", "Klappen – EINSTELLEN", "Trimmung – EINSTELLEN",
+                    "Beschleunigen – AUF 52–65 KIAS", "Rotieren – ",
+                    "[HEADER] KURZSTART", "Klappen – 25°", "Rotieren – BEI 41–49 KIAS",
+                    "Nach Abheben – AUF 45–54 KIAS BESCHLEUNIGEN", "Klappen – LANGSAM EINFAHREN",
+                    "Beschleunigen – AUF 64 KIAS", "Für bestes Steigen – WEITER AUF 76 KIAS",
+                    "[HEADER] START AUF WEICHER PISTE", "Klappen – 25°", "Rotieren – BEI 41–49 KIAS",
+                    "Nach Abheben – AUF 45–54 KIAS BESCHLEUNIGEN", "Klappen – LANGSAM EINFAHREN",
+                    "Beschleunigen – AUF 76 KIAS"
+                ],
+                "6. Steigflug & Reiseflug": [
+                    "[HEADER] STEIGFLUG", "Beste Steiggeschwindigkeit (Klappen 0°) – 76 KIAS",
+                    "Besten Steigwinkel (Klappen 0°) – 64 KIAS", "Reisesteigfluggeschwindigkeit – 87 KIAS",
+                    "Elektrische Kraftstoffpumpe – AUS BEI ERREICHEN DER WUNSCHHÖHE",
+                    "[HEADER] REISEFLUG", "Normale höchstzulässige Reiseleistung – 75%",
+                    "Leistung – GEMÄSS LEISTUNGSTABELLE EINSTELLEN", "Gemisch – ENTSPRECHEND EINSTELLEN"
+                ],
+                "7. Sinkflug & Landung": [
+                    "[HEADER] NORMALER SINKFLUG", "Leistung – 2500 RPM", "Fluggeschwindigkeit – <122 KIAS",
+                    "Gemisch – REICH", "Vergaservorwärmung – NACH BEDARF",
+                    "[HEADER] SINKFLUG MIT LEERLAUF", "Vergaservorwärmung – NACH BEDARF", "Gashebel – SCHLIESSEN",
+                    "Geschwindigkeit – NACH BEDARF", "Leistung – ALLE 30 SEKUNDEN PRÜFEN",
+                    "[HEADER] ANFLUG UND LANDUNG", "Tankwahlventil – RICHTIGER TANK", "Sitze – AUFGERICHTET",
+                    "Gurte – ANLEGEN / ANPASSEN", "Elektrische Kraftstoffpumpe – EIN", "Gemisch – EINSTELLEN",
+                    "Klappen – AUSFAHREN (MAX. 102 KIAS)", "Klimaanlage – AUS", "Austrimmen – AUF 75 KIAS",
+                    "Endanflug mit Klappen 40° – 66 KIAS"
+                ],
+                "8. Abstellen & Sichern": [
+                    "[HEADER] ABSTELLEN DES TRIEBWERKS", "Flügelklappen – EINFAHREN",
+                    "Elektrische Kraftstoffpumpe – AUS", "Klimaanlage – AUS", "Funkgeräte – AUS",
+                    "Gashebel – LEERLAUF", "Gemischhebel – SCHNELLSTOPP", "Zündschalter – AUS (Schlüssel abziehen)",
+                    "Hauptschalter – AUS",
+                    "[HEADER] FLUGZEUG ABSTELLEN", "Parkbremse – SETZEN", "Steuerhorn – MIT GURTEN SICHERN",
+                    "Bremsklötze – VORLEGEN", "Verankerungen – ANBRINGEN",
+                    "Besondere Vorkommnisse – MELDEN"
+                ]
+            },
+            "Not-Checkliste": {
+                "1. Triebwerksstörungen": [
+                    "[HEADER] LEISTUNGSVERLUST BEIM START", "Sichere Fluggeschwindigkeit – HALTEN",
+                    "Wenn ausreichend Bahn verbleibt – SOFORT LANDEN", "Falls keine Bahn mehr verfügbar – FLACHE KURVEN FLIEGEN",
+                    "Hindernissen – AUSWEICHEN", "Klappen – NACH BEDARF VERWENDEN", "Tankwahlventil – AUF VOLLSTEN TANK",
+                    "Elektrische Kraftstoffpumpe – EIN", "Gemisch – REICH", "Vergaservorwärmung – EIN",
+                    "Anlass-Einspritzknopf – VERRIEGELT", "Falls Leistung nicht zurückkehrt – LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] LEISTUNGSVERLUST WÄHREND DES FLUGES", "Fluggeschwindigkeit – 76 KIAS",
+                    "Geeigneten Landeplatz – AUSWÄHLEN", "Tankwahlventil – AUF VOLLSTEN TANK",
+                    "Elektrische Kraftstoffpumpe – EIN", "Gemisch – REICH", "Vergaservorwärmung – EIN",
+                    "Motorinstrumente – PRÜFEN", "Anlass-Einspritzknopf – VERRIEGELT", "Kraftstoffdruck – PRÜFEN",
+                    "Vergaservorwärmung (falls Leistung OK) – AUS", "Elektrische Kraftstoffpumpe (falls Leistung OK) – AUS",
+                    "Falls keine Wiederherstellung – LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] RAUHER TRIEBWERKLAUF", "Vergaservorwärmung – EIN",
+                    "Vergaservorwärmung (nach 1 min weiter rauh) – AUS", "Gemisch – ANPASSEN",
+                    "Elektrische Kraftstoffpumpe – EIN", "Tankventilschalter – AUF VOLLSTEN TANK WECHSELN",
+                    "Motorinstrumente – PRÜFEN", "Magnetcheck – L -> BEIDE -> R -> BEIDE",
+                    "Falls nur ein Magnet ok – MIT REDUZIERTER LEISTUNG LANDEN", "Auf Landung mit stehendem TRIEBWERK – VORBEREITET SEIN",
+                    "[HEADER] VERGASERVEREISUNG", "Vergaservorwärmung – EIN", "Gemisch – AUF RUHIGEN MOTORLAUF EINSTELLEN"
+                ],
+                "2. Notlandung & Trudeln": [
+                    "[HEADER] LANDUNG MIT STEHENDEM TRIEBWERK", "Auf besten Gleitwinkel trimmen – 76 KIAS",
+                    "Geeigneten Landeplatz – AUSWÄHLEN", "Funkmeldung – ABSETZEN FALLS MÖGLICH",
+                    "Gegenanflug – CA. 1000 FT ÜBER PLATZ", "Mit Klappen – 66 KIAS",
+                    "Höhe ggf. abbauen durch – VOLLKREISE / SLIP / KLAPPEN", "Hauptschalter (kurz vor Aufsetzen) – AUS", "Zünd/Anlasserschalter (kurz vor Aufsetzen) – AUS",
+                    "Tankwahlventil (kurz vor Aufsetzen) – ZU", "Gemischhebel (kurz vor Aufsetzen) – SCHNELLSTOPP",
+                    "Bauch- und Schultergurte – STRAFF ANGELEGT", "Türen (kurz vor dem Aufsetzen) - ENTRIEGELN", "Landung – MIT MINIMALER SPEED",
+                    "[HEADER] BEENDIGUNG DES TRUDELNS", "Gashebel – LEERLAUF", "Querruder – NEUTRAL",
+                    "Seitenruder entgegen Drehrichtung – VOLL", "Steuerhorn – VOLL DRÜCKEN",
+                    "Seitenruder (nach Dreh-Ende) – NEUTRAL", "Flugzeug – WEICH ABFANGEN"
+                ],
+                "3. Brandverfahren": [
+                    "[HEADER] BRAND BEIM ANLASSEN", "Anlasser – DURCHDREHEN", "Gemisch – SCHNELLSTOPP",
+                    "Gashebel – ÖFFNEN", "Elektrische Kraftstoffpumpe – AUS", "Tankwahlventil – ZU",
+                    "Falls Motor anspringt – WEITERLAUFEN LASSEN", "Falls Brand anhält – FLUGZEUG VERLASSEN u. VON AUSSEN LÖSCHEN",
+                    "[HEADER] BRAND WÄHREND DES FLUGES (ELEKTRISCH)", "Hauptschalter – AUS", "Kabinenbelüftung – ÖFFNEN",
+                    "Kabinenheizung – AUS", "Landung – SO BALD WIE MÖGLICH",
+                    "[HEADER] TRIEBWERKSBRAND IM FLUG", "Tankwahlventil – ZU", "Gashebel – GESCHLOSSEN",
+                    "Gemisch – SCHNELLSTOPP", "Elektrische Kraftstoffpumpe – AUS", "Heizung/Enteisung – AUS",
+                    "Hauptschalter – AUS (FALLS FUNK NICHT ERFORDERLICH)", "Landung – MIT STEHENDEM TRIEBWERK DURCHFÜHREN"
+                ],
+                "4. Systemfehler (Öl / Kraftstoff / Strom)": [
+                    "[HEADER] ÖLDRUCKVERLUST", "Nächsten Flugplatz – ANFLIEGEN", " - Mit Motorausfall rechnen",
+                    "Leistung – NICHT UNNÖTIG VERÄNDERN", "Falls Motor stoppt – LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] ZU HOHE ÖLTEMPERATUR", "Landen – AUF NÄCHSTEM GEEIGNETEN FLUGPLATZ",
+                    "Ursache – PRÜFEN LASSEN", "Öldruck – BEOBACHTEN", "Vorbereitung – AUF LANDUNG MIT STEHENDEM TRIEBWERK",
+                    "[HEADER] KRAFTSTOFFDRUCKABFALL", "Elektrische Kraftstoffpumpe – EIN",
+                    "Tankwahlventil – AUF VOLLSTEN TANK SCHALTEN", "Landung – SO BALD WIE MÖGLICH",
+                    "[HEADER] GENERATORAUSFALL (WARNLEUCHTE)", "Verbraucher einschalten und – AMPEREMETER PRÜFEN",
+                    "Elektrische Last – MINIMIEREN", "Generatorschutzschalter – PRÜFEN", "Generatorschalter – AUS -> EIN",
+                    "Generatorschalter (falls keine Besserung) – AUS", "Batterieschalter – WIE ERFORDERLICH",
+                    "Elektrische Last – MINIMIEREN", "Landung – SO BALD WIE MÖGLICH"
+                ],
+                "5. Kabinen-Vorfälle": [
+                    "[HEADER] OFFENE KABINENTÜR", "Geschwindigkeit – 87–89 KIAS", "Kabinenbelüftung – SCHLIESSEN",
+                    "Schlechtwetterfenster – ÖFFNEN", "Obere Verriegelung – SCHLIESSEN",
+                    "Seitliche Verriegelung – SCHLIESSEN", "Bei beiden offen – ERST SEITLICH, DANN OBEN VERRIEGELN"
+                ]
+            }
+        }
+    };
+
+    let currentAircraft = null;
+    let currentGroup = null;
+
+    function home() {
+        currentAircraft = null;
+        currentGroup = null;
+        const app = document.getElementById("app");
+        app.innerHTML = "<h2>Flugzeug auswählen</h2>";
+
+        const order = ["Cessna 150-172", "TB-10", "TB-20", "PA28-161 Cadet", "PA28-181 Archer II"];
+
+        order.forEach(name => {
+            if (checklistData[name]) {
+                const div = document.createElement("div");
+                div.className = "card";
+                div.innerText = name;
+                div.onclick = () => aircraftMenu(name);
+                app.appendChild(div);
+            }
+        });
+
+        const footer = document.createElement("div");
+        footer.id = "copyright-footer";
+        footer.innerHTML = "© 2026 A.Schlagintweit <br>Erstellt für den privaten Gebrauch und Schulungszwecke.";
+        app.appendChild(footer);
+    }
+
+    function aircraftMenu(name) {
+        currentAircraft = name;
+        currentGroup = null;
+        const app = document.getElementById("app");
+        app.innerHTML = `<h2>${name}</h2>`;
+
+        const hasNormal = checklistData[name]["Normalcheckliste"] !== undefined;
+        const hasEmergency = checklistData[name]["Not-Checkliste"] !== undefined;
+
+        if (hasNormal) {
+            const normalDiv = document.createElement("div");
+            normalDiv.className = "card card-normal";
+            normalDiv.innerText = "Normalcheckliste";
+            normalDiv.onclick = () => chapterMenu(name, "Normalcheckliste");
+            app.appendChild(normalDiv);
+        }
+
+        if (hasEmergency) {
+            const emergencyDiv = document.createElement("div");
+            emergencyDiv.className = "card card-emergency";
+            emergencyDiv.innerText = "Not-Checkliste";
+            emergencyDiv.onclick = () => chapterMenu(name, "Not-Checkliste");
+            app.appendChild(emergencyDiv);
+        }
+
+        if (hasNormal && !hasEmergency) {
+            chapterMenu(name, "Normalcheckliste");
+        }
+    }
+
+    function chapterMenu(aircraft, group) {
+        currentAircraft = aircraft;
+        currentGroup = group;
+        const app = document.getElementById("app");
+
+        const titleClass = (group === "Not-Checkliste") ? "title-emergency" : "title-normal";
+        app.innerHTML = `<h2 class="${titleClass}">${aircraft}<br><span style='font-size:1.1rem; font-weight:normal;'>${group}</span></h2>`;
+
+        const chapters = Object.keys(checklistData[aircraft][group]);
+        chapters.forEach(ch => {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerText = ch;
+            div.onclick = () => showChecklist(aircraft, group, ch);
+            app.appendChild(div);
+        });
+    }
+
+    function showChecklist(aircraft, group, chapter) {
+        const app = document.getElementById("app");
+        const titleClass = (group === "Not-Checkliste") ? "title-emergency" : "title-normal";
+        const modeClass = (group === "Not-Checkliste") ? "mode-emergency" : "mode-normal";
+
+        app.innerHTML = `<h2 class="${titleClass}">${aircraft}<br><span style='font-size:1rem; font-weight:normal;'>${chapter}</span></h2>`;
+
+        const items = checklistData[aircraft][group][chapter];
+        const doneStorageKey = `globalDoneChecklistItems`;
+        let currentDone = JSON.parse(localStorage.getItem(doneStorageKey)) || [];
+
+        items.forEach((itemText) => {
+    if (itemText.startsWith("[HEADER]")) {
+        const headerText = itemText.replace("[HEADER]", "").trim();
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "section-title";
+
+        // HIER IST DIE NEUE ZEILE: Sie erzwingt das Gelb im Cockpit!
+        headerDiv.style.color = "yellow";
+
+        headerDiv.innerText = headerText;
+        app.appendChild(headerDiv);
+        return;
+            }
+
+            const div = document.createElement("div");
+            div.className = `item ${modeClass}`;
+
+            const uniqueId = `${aircraft}-${group}-${chapter}-${itemText}`;
+            if (currentDone.includes(uniqueId)) {
+                div.classList.add("done");
+            }
+
+            div.innerHTML = renderItemSplit(itemText);
+
+            // Keine Klick-Funktion für reine Infozeilen oder Warnungen
+            if (!itemText.includes("Sofort und gleichzeitig durchführen") && !itemText.includes("Falls Störung bestehen bleibt") && !itemText.includes("WARNUNG:")) {
+                div.onclick = () => {
+                    let doneList = JSON.parse(localStorage.getItem(doneStorageKey)) || [];
+                    if (div.classList.contains("done")) {
+                        div.classList.remove("done");
+                        doneList = doneList.filter(id => id !== uniqueId);
+                    } else {
+                        div.classList.add("done");
+                        doneList.push(uniqueId);
+                    }
+                    localStorage.setItem(doneStorageKey, JSON.stringify(doneList));
+                };
+            }
+
+            app.appendChild(div);
+        });
+    }
+
+    function renderItemSplit(text) {
+        let separator = "";
+        if (text.includes(" – ")) {
+            separator = " – ";
+        } else if (text.includes(" - ")) {
+            separator = " - ";
+        } else if (text.includes(" : ")) {
+            separator = " : ";
+        } else if (text.includes(" :")) {
+            separator = " :";
+        }
+
+        if (separator !== "") {
+            const parts = text.split(separator);
+            const leftPart = parts[0].trim();
+            const rightPart = parts.slice(1).join(separator).trim();
+
+            return `<div class="item-left">${leftPart}</div><div class="item-right">${rightPart}</div>`;
+        }
+
+        return `<div class="item-left">${text}</div>`;
+    }
+
+    function resetAll() {
+    const modal = document.getElementById("resetModal");
+    modal.style.display = "flex";
+}
+
+function closeResetModal(confirmReset) {
+    document.getElementById("resetModal").style.display = "none";
+    if (confirmReset) {
+        localStorage.removeItem("globalDoneChecklistItems");
+        document.querySelectorAll(".item").forEach(el => {
+            el.classList.remove("done");
+        });
+    }
+}
+
+    function backMenu() {
+        if (currentGroup && currentAircraft) {
+            const hasEmergency = checklistData[currentAircraft]["Not-Checkliste"] !== undefined;
+            if (!hasEmergency && currentGroup === "Normalcheckliste") {
+                home();
+            } else {
+                chapterMenu(currentAircraft, currentGroup);
+            }
+        } else if (currentAircraft) {
+            aircraftMenu(currentAircraft);
+        } else {
+            home();
+        }
+    }
+
+    home();
+</script>
+
+</body>
+</html>

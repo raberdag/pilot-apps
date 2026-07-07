@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight and Balance</title>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 20px; box-sizing: border-box; }
+        .view { display: none; }
+        .view.active { display: block; }
+        .form-group { background-color: #1e293b; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        label { font-weight: 500; font-size: 14px; color: #94a3b8; }
+        input { background-color: #0f172a; color: white; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; width: 100px; text-align: right; }
+        input[readonly] { background-color: #1e293b; color: #64748b; border-color: #334155; }
+        .btn-large { width: 100%; padding: 14px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; color: white; cursor: pointer; margin-top: 10px; }
+        .btn-select { background-color: #2563eb; margin-bottom: 10px; }
+        .status-box { padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; background: #334155; }
+        #warnText { color: #ef4444; font-weight: bold; text-align: center; margin-bottom: 15px; }
+        canvas { background-color: #1e293b; border-radius: 8px; width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto 20px auto; border: 1px solid #334155; }
+        .disclaimer-box { font-size: 11px; color: #64748b; margin-top: 30px; text-align: justify; }
+        .copyright-text { font-size: 11px; color: #474169; text-align: center; margin-top: 15px; }
+
+        /* Neue Branding Styles */
+        .brand-header { text-align: center; padding-top: 20px; margin-bottom: 40px; }
+        .brand-name { font-size: 48px; font-weight: 800; color: #3b82f6; margin: 0; letter-spacing: -1px; }
+        .brand-subtitle { font-size: 16px; color: #94a3b8; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 1px; }
+        .section-divider { font-size: 22px; font-weight: 600; color: #f8fafc; border-bottom: 2px solid #3b82f6; display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="view1" class="view active">
+    <div class="brand-header">
+        <h1 class="brand-name">Fly-Weight</h1>
+        <p class="brand-subtitle">Weight and Balance Calculator</p>
+    </div>
+
+    <div style="text-align: center;">
+        <h2 class="section-divider">Flugzeugauswahl</h2>
+    </div>
+
+    <button class="btn-large btn-select" onclick="loadAc('cadet')">PA-28-161 Cadet</button>
+    <button class="btn-large btn-select" onclick="loadAc('archer')">PA-28-181 Archer II</button>
+    <button class="btn-large btn-select" onclick="loadAc('c150')">Cessna 150</button>
+    <button class="btn-large btn-select" onclick="loadAc('c172')">Cessna 172 Skyhawk</button>
+    <button class="btn-large btn-select" onclick="loadAc('tb10')">Socata TB-10 Tobago</button>
+    <button class="btn-large btn-select" onclick="loadAc('tb20')">Socata TB-20 Trinidad</button>
+</div>
+
+<div id="view2" class="view">
+    <h2 id="acTitle"></h2>
+    <div class="form-group">
+        <div class="form-row"><label>Leermasse (kg)</label><input type="number" id="ew" readonly oninput="calculate()"></div>
+        <div class="form-row"><label id="labelEa">Schwerpunkt (m)</label><input type="number" id="ea" step="0.001" readonly oninput="calculate()"></div>
+        <button class="btn-large" style="background:#f59e0b;" onclick="toggleEdit()">Bearbeiten</button>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #475569;">
+
+        <div class="form-row"><label>Pilot / Copilot vorne (kg)</label><input type="number" id="frontPax" value="100" oninput="document.getElementById('frontPaxSlider').value = this.value; calculate(); saveInputs()"></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <button onclick="document.getElementById('frontPax').value = Math.max(0, parseInt(document.getElementById('frontPax').value)-1); document.getElementById('frontPaxSlider').value = document.getElementById('frontPax').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">-</button>
+            <input type="range" id="frontPaxSlider" min="0" max="350" value="100" style="flex: 1;" oninput="document.getElementById('frontPax').value = this.value; calculate(); saveInputs()">
+            <button onclick="document.getElementById('frontPax').value = Math.min(250, parseInt(document.getElementById('frontPax').value)+1); document.getElementById('frontPaxSlider').value = document.getElementById('frontPax').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">+</button>
+        </div>
+
+        <div id="rowRearPaxContainer">
+            <div class="form-row" id="rowRearPax"><label>Passagiere hinten (kg)</label><input type="number" id="rearPax" value="0" oninput="document.getElementById('rearPaxSlider').value = this.value; calculate(); saveInputs()"></div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <button onclick="document.getElementById('rearPax').value = Math.max(0, parseInt(document.getElementById('rearPax').value)-1); document.getElementById('rearPaxSlider').value = document.getElementById('rearPax').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">-</button>
+                <input type="range" id="rearPaxSlider" min="0" max="250" value="0" style="flex: 1;" oninput="document.getElementById('rearPax').value = this.value; calculate(); saveInputs()">
+                <button onclick="document.getElementById('rearPax').value = Math.min(250, parseInt(document.getElementById('rearPax').value)+1); document.getElementById('rearPaxSlider').value = document.getElementById('rearPax').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">+</button>
+            </div>
+        </div>
+
+        <div class="form-row"><label>Kraftstoff (Liter)</label><input type="number" id="fuel" value="100" oninput="document.getElementById('fuelSlider').value = this.value; calculate(); saveInputs()"></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <button onclick="document.getElementById('fuel').value = Math.max(0, parseInt(document.getElementById('fuel').value)-1); document.getElementById('fuelSlider').value = document.getElementById('fuel').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">-</button>
+            <input type="range" id="fuelSlider" min="0" max="350" value="100" style="flex: 1;" oninput="document.getElementById('fuel').value = this.value; calculate(); saveInputs()">
+            <button onclick="document.getElementById('fuel').value = Math.min(350, parseInt(document.getElementById('fuel').value)+1); document.getElementById('fuelSlider').value = document.getElementById('fuel').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">+</button>
+        </div>
+
+        <div class="form-row"><label>Gepäck (kg)</label><input type="number" id="bag1" value="5" oninput="document.getElementById('bag1Slider').value = this.value; calculate(); saveInputs()"></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <button onclick="document.getElementById('bag1').value = Math.max(0, parseInt(document.getElementById('bag1').value)-1); document.getElementById('bag1Slider').value = document.getElementById('bag1').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">-</button>
+            <input type="range" id="bag1Slider" min="0" max="60" value="5" style="flex: 1;" oninput="document.getElementById('bag1').value = this.value; calculate(); saveInputs()">
+            <button onclick="document.getElementById('bag1').value = Math.min(60, parseInt(document.getElementById('bag1').value)+1); document.getElementById('bag1Slider').value = document.getElementById('bag1').value; calculate(); saveInputs()" style="padding: 10px 15px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">+</button>
+        </div>
+        <div id="statusBox" class="status-box">...</div>
+        <div id="warnText"></div>
+        <canvas id="c"></canvas>
+        <button class="btn-large" style="background: #64748b; color: white;" onclick="location.reload()">Zurück</button>
+    </div>
+
+    <div id="pinModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 9999; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
+        <div style="background: #1e293b; border: 2px solid #f59e0b; border-radius: 12px; padding: 25px; width: 100%; max-width: 400px; text-align: center; color: #f8fafc; box-sizing: border-box;">
+            <div style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
+            <h3 style="margin: 0 0 10px 0; color: #f59e0b;">Sicherheitsfreigabe</h3>
+            <p style="margin: 0 0 20px 0; color: #94a3b8; font-size: 14px;">Sie verändern die offiziellen Stammdaten des Luftfahrzeugs. Bitte Admin-PIN eingeben:</p>
+            <input type="password" id="pinInput" placeholder="PIN eingeben" style="width: 100%; padding: 12px; border-radius: 6px; background: #0f172a; color: white; text-align: center; margin-bottom: 20px; box-sizing: border-box; border:1px solid #475569;">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closePinModal()" style="flex: 1; padding: 12px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: bold;">Abbrechen</button>
+                <button onclick="checkPin()" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold;">Freischalten</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer-box">
+        <strong>Disclaimer:</strong> Unverbindliches Hilfsmittel. Nutzung auf eigene Gefahr. Keine Haftung für Fehler. Der Pilot (PIC) muss jede Berechnung eigenverantwortlich anhand des Original-Flughandbuchs (POH) und Wägeberichts prüfen.
+    </div>
+    <div class="copyright-text">&copy; Copyright 2026 A. Schlagintweit</div>
+
+    <script>
+        const aircraftData = {
+            "cadet": { type: "cg", name: "PA-28-161 Cadet", ew: 658, ea: 2.136, arms: { front: 2.04, rear: 2.92, fuel: 2.41, bag: 3.63 }, maxW: 1055, minX: 2.00, maxX: 2.45, minW: 500, env: [[2.11, 545], [2.11, 880], [2.21, 1055], [2.36, 1055], [2.36, 545]] },
+            "archer": { type: "cg", name: "PA-28-181 Archer II", ew: 736, ea: 2.20, arms: { front: 2.04, rear: 2.92, fuel: 2.41, bag: 3.63 }, maxW: 1157, minX: 2.00, maxX: 2.45, minW: 500, env: [[2.08, 545], [2.08, 930], [2.26, 1157], [2.36, 1157], [2.36, 545]] },
+            "c150": { type: "moment", scaleX: 0.1, name: "Cessna 150", ew: 511, ea: 0.85, arms: { front: 0.99, rear: 0, fuel: 1.02, bag: 1.63 }, maxW: 726, minX: 40, maxX: 75, minW: 500, env: [[43.2, 540], [48.3, 600], [60.61, 726], [69.02, 726], [51.408, 540]] },
+            "c172": { type: "moment", scaleX: 0.1, name: "Cessna 172 Skyhawk", ew: 683, ea: 1.01, arms: { front: 0.94, rear: 1.85, fuel: 1.22, bag: 2.45 }, maxW: 1043, minX: 60, maxX: 130, minW: 700, env: [[61.5, 700], [80.0, 900], [102.0, 1043], [125.0, 1043], [84.0, 700]] },
+            "tb10": { type: "moment", scaleX: 1, name: "Socata TB-10 Tobago", ew: 766.5, ea: 0.98, arms: { front: 1.165, rear: 2.095, fuel: 1.075, bag: 2.465 }, maxW: 1150, minX: 500, maxX: 1400, minW: 550, env: [[560, 600], [900, 950], [1150, 1150], [1375, 1150], [720, 600]] },
+            "tb20": { type: "moment", scaleX: 1, name: "Socata TB-20 Trinidad", ew: 879.78, ea: 0.9858, arms: { front: 1.155, rear: 2.035, fuel: 1.085, bag: 2.600 }, maxW: 1400, minX: 650, maxX: 1750, minW: 700, env: [[715, 780], [1190, 1250], [1500, 1400], [1700, 1400], [955, 780]] }
+        };
+        let activeAc = null, isEditing = false;
+
+        function loadAc(id) {
+            activeAc = aircraftData[id];
+            document.getElementById('acTitle').innerText = activeAc.name;
+            document.getElementById('ew').value = activeAc.ew;
+            document.getElementById('ea').value = activeAc.ea;
+            document.getElementById('labelEa').innerText = activeAc.name.includes("Cessna") ? "Schwerpunkt ab Bezugsebene (m)" : (activeAc.type === "moment" ? "Leerschwerpunkt ab Brandschott (m)" : "Schwerpunkt (m)");
+            document.getElementById('rowRearPaxContainer').style.display = (id === 'c150') ? 'none' : 'block';
+            document.getElementById('view1').classList.remove('active');
+            document.getElementById('view2').classList.add('active');
+            loadSavedInputs();
+            calculate();
+        }
+
+        function toggleEdit() {
+            if (isEditing) {
+                isEditing = false;
+                document.getElementById('ew').readOnly = true;
+                document.getElementById('ea').readOnly = true;
+                const btn = document.querySelector("button[onclick='toggleEdit()']");
+                btn.innerText = "Bearbeiten"; btn.style.background = "#f59e0b"; return;
+            }
+            document.getElementById('pinInput').value = "";
+            document.getElementById('pinModal').style.display = "flex";
+            document.getElementById('pinInput').focus();
+        }
+
+        function closePinModal() { document.getElementById('pinModal').style.display = "none"; }
+
+        function checkPin() {
+            if (document.getElementById('pinInput').value === "1234") {
+                isEditing = true; document.getElementById('ew').readOnly = false; document.getElementById('ea').readOnly = false;
+                const btn = document.querySelector("button[onclick='toggleEdit()']");
+                btn.innerText = "Speichern"; btn.style.background = "#10b981"; closePinModal();
+            } else { alert("Falsche PIN! Zugriff verweigert."); }
+        }
+
+        function saveInputs() {
+            if (!activeAc) return;
+            const acId = Object.keys(aircraftData).find(key => aircraftData[key] === activeAc);
+            if (!acId) return;
+            localStorage.setItem('wb_' + acId + '_frontPax', document.getElementById('frontPax').value);
+            localStorage.setItem('wb_' + acId + '_rearPax', document.getElementById('rearPax').value);
+            localStorage.setItem('wb_' + acId + '_fuel', document.getElementById('fuel').value);
+            localStorage.setItem('wb_' + acId + '_bag1', document.getElementById('bag1').value);
+        }
+
+        function loadSavedInputs() {
+            if (!activeAc) return;
+            const acId = Object.keys(aircraftData).find(key => aircraftData[key] === activeAc);
+            if (!acId) return;
+            if (localStorage.getItem('wb_' + acId + '_frontPax') !== null) {
+                document.getElementById('frontPax').value = localStorage.getItem('wb_' + acId + '_frontPax');
+                document.getElementById('rearPax').value = localStorage.getItem('wb_' + acId + '_rearPax');
+                document.getElementById('fuel').value = localStorage.getItem('wb_' + acId + '_fuel');
+                document.getElementById('bag1').value = localStorage.getItem('wb_' + acId + '_bag1');
+            } else {
+                document.getElementById('frontPax').value = "100";
+                document.getElementById('rearPax').value = "0";
+                document.getElementById('fuel').value = "100";
+                document.getElementById('bag1').value = "5";
+            }
+            document.getElementById('frontPaxSlider').value = document.getElementById('frontPax').value;
+            document.getElementById('rearPaxSlider').value = document.getElementById('rearPax').value;
+            document.getElementById('fuelSlider').value = document.getElementById('fuel').value;
+            document.getElementById('bag1Slider').value = document.getElementById('bag1').value;
+        }
+
+        function calculate() {
+            if (!activeAc) return;
+            let ew = parseFloat(document.getElementById('ew').value) || 0;
+            let ea = parseFloat(document.getElementById('ea').value) || 0;
+            let front = parseFloat(document.getElementById('frontPax').value) || 0;
+            let rear = (document.getElementById('rowRearPaxContainer').style.display === 'none') ? 0 : (parseFloat(document.getElementById('rearPax').value) || 0);
+            let fuelLiters = parseFloat(document.getElementById('fuel').value) || 0;
+            let bag = parseFloat(document.getElementById('bag1').value) || 0;
+
+            let fuelW = fuelLiters * 0.72;
+            let totalW = ew + front + rear + fuelW + bag;
+            let totalMoment = (ew * ea) + (front * activeAc.arms.front) + (rear * activeAc.arms.rear) + (fuelW * activeAc.arms.fuel) + (bag * activeAc.arms.bag);
+            let finalCG = totalW > 0 ? (totalMoment / totalW) : 0;
+
+            let statusBox = document.getElementById('statusBox');
+            let warnText = document.getElementById('warnText');
+            let displayX = (activeAc.type === "moment") ? totalMoment * activeAc.scaleX : finalCG;
+
+            let inside = isInside([displayX, totalW], activeAc.env);
+            let weightOk = totalW <= activeAc.maxW;
+
+            statusBox.innerText = "Gewicht: " + Math.round(totalW) + " kg | Schwerpunkt: " + finalCG.toFixed(3) + " m";
+
+            if (inside && weightOk) { statusBox.style.background = "#10b981"; warnText.innerText = ""; }
+            else { statusBox.style.background = "#ef4444"; warnText.innerText = !weightOk ? "WARNUNG: Maximales Abfluggewicht überschritten!" : "WARNUNG: Schwerpunkt außerhalb der Grenzen!"; }
+            drawGraph(displayX, totalW);
+        }
+
+        function drawGraph(cg, weight) {
+            const canvas = document.getElementById('c'); const ctx = canvas.getContext('2d');
+            canvas.width = 400; canvas.height = 300; ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let env = activeAc.env; let xs = env.map(p => p[0]); let ys = env.map(p => p[1]);
+            let minX = Math.min(...xs, activeAc.minX) * 0.95; let maxX = Math.max(...xs, activeAc.maxX) * 1.05;
+            let minY = activeAc.minW * 0.9; let maxY = activeAc.maxW * 1.1;
+            function toCanvasX(x) { return 40 + (x - minX) / (maxX - minX) * 320; }
+            function toCanvasY(y) { return 260 - (y - minY) / (maxY - minY) * 220; }
+            ctx.strokeStyle = "#334155"; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(toCanvasX(env[0][0]), toCanvasY(env[0][1]));
+            for (let i = 1; i < env.length; i++) { ctx.lineTo(toCanvasX(env[i][0]), toCanvasY(env[i][1])); }
+            ctx.closePath(); ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.stroke();
+            ctx.fillStyle = "rgba(37, 99, 235, 0.1)"; ctx.fill();
+            ctx.beginPath(); ctx.arc(toCanvasX(cg), toCanvasY(weight), 6, 0, 2 * Math.PI);
+            ctx.fillStyle = "#10b981"; ctx.fill(); ctx.strokeStyle = "white"; ctx.stroke();
+        }
+
+        function isInside(p, vs) {
+            let x = p[0], y = p[1], inside = false;
+            for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+                let xi = vs[i][0], yi = vs[i][1], xj = vs[j][0], yj = vs[j][1];
+                if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+            }
+            return inside;
+        }
+    </script></body>
+</html>
