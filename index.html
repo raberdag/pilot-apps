@@ -62,22 +62,18 @@
         .btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
         .btn-subtext { display: block; font-size: 11px; font-weight: normal; color: #ffedd5; margin-top: 2px; }
 
-        .btn-row { display: flex; gap: 10px; }
-        .btn-row .btn { flex: 1; box-sizing: border-box; }
+        .btn-row { display: flex; flex-direction: column; gap: 8px; }
+        .btn-row .btn { box-sizing: border-box; padding: 9px; }
+        .btn-row .btn-subtext { font-size: 10px; margin-top: 1px; }
 
         .btn-secondary {
             background: transparent;
             border: 2px solid var(--accent-orange);
             color: var(--accent-orange);
-            padding: 12px 14px;
         }
         .btn-secondary:hover { background: var(--accent-orange); color: white; }
         .btn-secondary .btn-subtext { color: var(--accent-orange); opacity: 0.75; }
         .btn-secondary:hover .btn-subtext { color: #ffedd5; }
-
-        @media (max-width: 480px) {
-            .btn-row { flex-direction: column; }
-        }
 
         /* Support Box */
         .support-box {
